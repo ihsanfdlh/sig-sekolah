@@ -1,30 +1,47 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
- <meta charset="utf-8">
- <meta name="viewport" content="width=device-width, initial-scale=1">
- <title>@yield('title') - SIG Sekolah</title>
- <link rel="stylesheet"
- href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
- @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@yield('title') - SIG Sekolah</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-gray-100 text-gray-800">
- <nav class="bg-blue-800 text-white">
- <div class="max-w-6xl mx-auto px-4 py-3 flex gap-6">
- <span class="font-bold">SIG Sekolah</span>
- <a href="{{ url('/') }}">Peta Publik</a>
- <a href="{{ route('admin.sekolah.index') }}">Data Sekolah</a>
- </div>
- </nav>
- <main class="max-w-6xl mx-auto px-4 py-6">
- @if (session('success'))
- <div class="mb-4 p-3 rounded bg-green-100 text-green-800">
- {{ session('success') }}
- </div>
- @endif
- @yield('content')
- </main>
- <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
- @stack('scripts')
+<body class="app-page">
+    <header class="app-navbar">
+        <a class="app-brand" href="{{ route('peta.index') }}">
+            <span class="app-brand-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z" />
+                    <circle cx="12" cy="10" r="2.5" />
+                </svg>
+            </span>
+            <span class="app-brand-text">
+                <strong>SIG Sekolah</strong>
+                <small>Sistem Informasi Geografis Sekolah</small>
+            </span>
+        </a>
+
+        <nav class="app-nav" aria-label="Navigasi utama">
+            <a href="{{ route('peta.index') }}" @class(['is-active' => request()->routeIs('peta.index')])>
+                Peta Publik
+            </a>
+            <a href="{{ route('admin.sekolah.index') }}" @class(['is-active' => request()->routeIs('admin.sekolah.*')])>
+                Data Sekolah
+            </a>
+        </nav>
+    </header>
+
+    <main class="page-content">
+        @if (session('success'))
+            <div class="alert-success" role="status">
+                {{ session('success') }}
+            </div>
+        @endif
+        @yield('content')
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    @stack('scripts')
 </body>
 </html>

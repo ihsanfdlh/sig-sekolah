@@ -9,14 +9,14 @@
     'jenjang' => ['SD', 'SMP', 'MTS', 'SMA', 'SMK'],
     'status' => ['Negeri', 'Swasta'],
   ];
-  $cls = 'w-full border rounded px-3 py-2';
+  $cls = 'form-control';
 @endphp
 
-<div class="bg-white rounded shadow p-6 grid md:grid-cols-2 gap-6">
-  <!-- Kolom Kiri: Form Input Teks & Pilihan -->
-  <div class="space-y-4">
+<div class="form-card">
+  <div class="form-columns">
+    <div class="form-section">
     @foreach ($teks as $name => $label)
-      <div>
+      <div class="form-field">
         <label for="{{ $name }}" class="block font-medium">
           {{ $label }}
         </label>
@@ -24,13 +24,13 @@
           value="{{ old($name, $sekolah->$name ?? '') }}"
           class="{{ $cls }}">
         @error($name)
-          <p class="text-red-600 text-sm">{{ $message }}</p>
+          <p class="field-error">{{ $message }}</p>
         @enderror
       </div>
     @endforeach
 
     @foreach ($pilihan as $name => $opsi)
-      <div>
+      <div class="form-field">
         <label for="{{ $name }}" class="block font-medium">
           {{ ucfirst($name) }}
         </label>
@@ -43,65 +43,58 @@
           @endforeach
         </select>
         @error($name)
-          <p class="text-red-600 text-sm">{{ $message }}</p>
+          <p class="field-error">{{ $message }}</p>
         @enderror
       </div>
     @endforeach
 
-    <div>
+    <div class="form-field">
       <label for="alamat" class="block font-medium">Alamat</label>
       <textarea id="alamat" name="alamat" rows="3" class="{{ $cls }}">{{ old('alamat', $sekolah->alamat ?? '') }}</textarea>
       @error('alamat')
-        <p class="text-red-600 text-sm">{{ $message }}</p>
+        <p class="field-error">{{ $message }}</p>
       @enderror
     </div>
   </div>
-  <div class="space-y-4">
-  <div class="flex justify-between items-center">
-    <p class="font-medium text-sm">
-      Klik peta, geser marker, atau gunakan lokasi saat ini
-    </p>
-    <!-- Tombol Gunakan Lokasi Saya -->
-    <button 
-      type="button" 
-      id="btn-lokasi-saya" 
-      class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded shadow-sm flex items-center gap-1.5 transition-colors"
-    >
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <div class="form-section">
+    <div class="location-heading">
+      <p>Klik peta, geser marker, atau gunakan lokasi saat ini.</p>
+      <button type="button" id="btn-lokasi-saya" class="button location-button">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
       </svg>
-      Gunakan Lokasi Saya
-    </button>
-  </div>
-
-  <div id="map-picker" class="h-80 rounded border"></div>
-
-  <div class="grid grid-cols-2 gap-4">
-    <div>
-      <label for="latitude" class="block font-medium">Latitude</label>
-      <input type="number" step="any" id="latitude" name="latitude"
-        value="{{ old('latitude', $sekolah->latitude ?? '') }}"
-        class="{{ $cls }}">
-      @error('latitude')
-        <p class="text-red-600 text-sm">{{ $message }}</p>
-      @enderror
+        Gunakan Lokasi Saya
+      </button>
     </div>
-    <div>
-      <label for="longitude" class="block font-medium">Longitude</label>
-      <input type="number" step="any" id="longitude" name="longitude"
-        value="{{ old('longitude', $sekolah->longitude ?? '') }}"
-        class="{{ $cls }}">
-      @error('longitude')
-        <p class="text-red-600 text-sm">{{ $message }}</p>
-      @enderror
+
+    <div id="map-picker" class="map-picker"></div>
+
+    <div class="coordinate-fields">
+      <div class="form-field">
+        <label for="latitude">Latitude</label>
+        <input type="number" step="any" id="latitude" name="latitude"
+          value="{{ old('latitude', $sekolah->latitude ?? '') }}"
+          class="{{ $cls }}">
+        @error('latitude')
+          <p class="field-error">{{ $message }}</p>
+        @enderror
+      </div>
+      <div class="form-field">
+        <label for="longitude">Longitude</label>
+        <input type="number" step="any" id="longitude" name="longitude"
+          value="{{ old('longitude', $sekolah->longitude ?? '') }}"
+          class="{{ $cls }}">
+        @error('longitude')
+          <p class="field-error">{{ $message }}</p>
+        @enderror
+      </div>
     </div>
-  </div>
-    <div class="flex gap-3 pt-2">
-      <button type="submit" class="px-5 py-2 bg-blue-700 text-white rounded hover:bg-blue-800">
+    <div class="form-actions">
+      <button type="submit" class="button">
         Simpan
       </button>
-      <a href="{{ route('admin.sekolah.index') }}" class="px-5 py-2 bg-gray-300 rounded hover:bg-gray-400">
+      <a href="{{ route('admin.sekolah.index') }}" class="button button-secondary">
         Batal
       </a>
     </div>
@@ -117,7 +110,7 @@
     const sudahAda = latInput.value !== '' && lngInput.value !== '';
     const pusat = sudahAda 
       ? [parseFloat(latInput.value), parseFloat(lngInput.value)]
-      : [-3.3194, 114.5908]; // Pusat default: Banjarmasin
+      : [-1.8374614675638135, 115.63343545771596];
 
     const map = L.map('map-picker').setView(pusat, sudahAda ? 16 : 13);
 
