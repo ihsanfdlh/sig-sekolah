@@ -1,296 +1,1213 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Peta Sekolah</title>
-  
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  
-  <!-- Leaflet MarkerCluster CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    html, body { 
-      height: 100%; 
-      margin: 0; 
-      font-family: system-ui, sans-serif; 
-    }
-    header { 
-      height: 56px; 
-      box-sizing: border-box; 
-      padding: 0 16px; 
-      display: flex; 
-      align-items: center; 
-      gap: 16px; 
-      background: #1e3a8a; 
-      color: #fff; 
-    }
-    header h1 { font-size: 18px; margin: 0; }
-    header a { color: #bfdbfe; margin-left: auto; }
-    
-    .search-box {
-      position: relative;
-      width: 260px;
-    }
+    <title>WebGIS Peta Sekolah</title>
 
-    .search-box input {
-      width: 100%;
-      padding: 7px 12px;
-      border-radius: 6px;
-      border: 1px solid #cbd5e1;
-      outline: none;
-      color: #1e293b;
-      box-sizing: border-box;
-    }
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
-    .search-box input:focus {
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-    }
+    <!-- Marker Cluster CSS -->
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
 
-    .rekomendasi-box {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 6px;
-      max-height: 220px;
-      overflow-y: auto;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      z-index: 1000;
-      display: none;
-      margin-top: 4px;
-    }
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
 
-    .rekomendasi-item {
-      padding: 8px 12px;
-      cursor: pointer;
-      color: #1e293b;
-      font-size: 14px;
-      border-bottom: 1px solid #f1f5f9;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    .rekomendasi-item:last-child {
-      border-bottom: none;
-    }
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --background: #f8fafc;
+            --white: #ffffff;
+            --text: #0f172a;
+            --muted: #64748b;
+            --border: #e2e8f0;
+        }
 
-    .rekomendasi-item:hover {
-      background-color: #f1f5f9;
-      color: #2563eb;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    .tag-info {
-      font-size: 11px;
-      background-color: #e2e8f0;
-      color: #475569;
-      padding: 2px 6px;
-      border-radius: 4px;
-    }
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
 
-    #map { height: calc(100% - 56px); }
-  </style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            color: var(--text);
+            background: var(--background);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ================= HEADER ================= */
+
+        .navbar {
+            width: 100%;
+            min-height: 72px;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+
+            display: flex;
+            align-items: center;
+            gap: 22px;
+
+            padding: 12px 24px;
+
+            position: relative;
+            z-index: 1200;
+
+            box-shadow: 0 2px 12px rgba(0,0,0,.04);
+        }
+
+        /* ================= BRAND ================= */
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            flex-shrink: 0;
+        }
+
+        .brand-icon {
+            width: 43px;
+            height: 43px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: var(--primary);
+            color: white;
+
+            border-radius: 11px;
+            font-size: 21px;
+        }
+
+        .brand-text h1 {
+            font-size: 17px;
+            font-weight: 750;
+            white-space: nowrap;
+        }
+
+        .brand-text p {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 3px;
+        }
+
+        /* ================= HEADER CONTROLS ================= */
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* ================= SEARCH ================= */
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 180px;
+            max-width: 420px;
+        }
+
+        .search-box > i {
+            position: absolute;
+            top: 50%;
+            left: 14px;
+            transform: translateY(-50%);
+
+            color: var(--muted);
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            height: 42px;
+
+            padding: 0 15px 0 40px;
+
+            border: 1px solid var(--border);
+            border-radius: 9px;
+
+            background: #f8fafc;
+
+            color: var(--text);
+            font-size: 13px;
+
+            outline: none;
+            transition: .2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+        }
+
+        /* ================= REKOMENDASI ================= */
+
+        .rekomendasi-box {
+            position: absolute;
+
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+
+            box-shadow: 0 10px 30px rgba(0,0,0,.15);
+
+            max-height: 320px;
+            overflow-y: auto;
+
+            display: none;
+            z-index: 2000;
+        }
+
+        .rekomendasi-item {
+            padding: 12px 14px;
+
+            border-bottom: 1px solid #f1f5f9;
+
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .rekomendasi-item:last-child {
+            border-bottom: none;
+        }
+
+        .rekomendasi-item:hover {
+            background: #eff6ff;
+        }
+
+        .rekomendasi-nama {
+            font-size: 13px;
+            font-weight: 650;
+            margin-bottom: 5px;
+        }
+
+        .rekomendasi-info {
+            font-size: 11px;
+            color: var(--muted);
+
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ================= FILTER ================= */
+
+        .filter-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .filter-select {
+            height: 42px;
+
+            min-width: 130px;
+            padding: 0 12px;
+
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+
+            color: #334155;
+            font-size: 13px;
+
+            cursor: pointer;
+            outline: none;
+        }
+
+        .filter-select:focus {
+            border-color: var(--primary);
+        }
+
+        /* ================= BUTTON ================= */
+
+        .btn-reset {
+            height: 42px;
+            padding: 0 14px;
+
+            border: 1px solid var(--border);
+            border-radius: 9px;
+
+            background: white;
+            color: #475569;
+
+            font-size: 13px;
+            font-weight: 600;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .btn-reset:hover {
+            background: #f1f5f9;
+        }
+
+        .btn-admin {
+            height: 42px;
+            padding: 0 15px;
+
+            background: var(--primary);
+            color: white;
+
+            border-radius: 9px;
+            text-decoration: none;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+
+            font-size: 13px;
+            font-weight: 600;
+
+            white-space: nowrap;
+            transition: .2s;
+        }
+
+        .btn-admin:hover {
+            background: var(--primary-dark);
+        }
+
+        /* ================= STATISTIK HEADER ================= */
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 9px 12px;
+
+            background: #eff6ff;
+            border: 1px solid #dbeafe;
+            border-radius: 9px;
+
+            white-space: nowrap;
+        }
+
+        .stat-header i {
+            color: var(--primary);
+            font-size: 17px;
+        }
+
+        .stat-header strong {
+            font-size: 14px;
+            color: var(--primary);
+        }
+
+        .stat-header span {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        /* ================= MAP ================= */
+
+        .map-container {
+            position: relative;
+            flex: 1;
+            min-height: 0;
+            width: 100%;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* ================= MAP INFO ================= */
+
+        .map-info {
+            position: absolute;
+
+            left: 20px;
+            top: 20px;
+
+            z-index: 500;
+
+            background: white;
+
+            padding: 13px 17px;
+            border-radius: 11px;
+
+            box-shadow: 0 4px 20px rgba(0,0,0,.12);
+
+            pointer-events: none;
+        }
+
+        .map-info h3 {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .map-info h3 i {
+            color: var(--primary);
+            margin-right: 5px;
+        }
+
+        .map-info p {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        /* ================= POPUP ================= */
+
+        .leaflet-popup-content-wrapper {
+            border-radius: 12px;
+            padding: 4px;
+        }
+
+        .leaflet-popup-content {
+            margin: 12px;
+            min-width: 220px;
+        }
+
+        .popup-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 11px;
+            padding-right: 12px;
+        }
+
+        .popup-badges {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+
+        .badge {
+            background: #dbeafe;
+            color: #1d4ed8;
+
+            font-size: 11px;
+            font-weight: 600;
+
+            padding: 5px 9px;
+            border-radius: 6px;
+        }
+
+        .badge-status {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .popup-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+
+            font-size: 12px;
+            line-height: 1.5;
+
+            margin-bottom: 10px;
+        }
+
+        .popup-row i {
+            color: var(--primary);
+            font-size: 14px;
+        }
+
+        .popup-row span {
+            color: #475569;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 1250px) {
+
+            .navbar {
+                gap: 15px;
+                padding: 12px 16px;
+            }
+
+            .brand-text p {
+                display: none;
+            }
+
+            .filter-select {
+                min-width: 110px;
+            }
+
+            .btn-reset span {
+                display: none;
+            }
+
+        }
+
+        @media (max-width: 1000px) {
+
+            .navbar {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .brand {
+                width: 100%;
+            }
+
+            .header-controls {
+                width: 100%;
+                flex: auto;
+            }
+
+            .search-box {
+                max-width: none;
+            }
+
+        }
+
+        @media (max-width: 650px) {
+
+            .navbar {
+                padding: 10px 12px;
+            }
+
+            .brand-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 18px;
+            }
+
+            .brand-text h1 {
+                font-size: 15px;
+            }
+
+            .header-controls {
+                flex-wrap: wrap;
+            }
+
+            .search-box {
+                flex: 1 1 100%;
+                max-width: none;
+            }
+
+            .filter-wrapper {
+                flex: 1;
+            }
+
+            .filter-select {
+                flex: 1;
+                min-width: 0;
+                width: 50%;
+            }
+
+            .stat-header {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .btn-admin span {
+                display: none;
+            }
+
+            .btn-admin {
+                padding: 0 13px;
+            }
+
+            .map-info {
+                top: 12px;
+                left: 12px;
+                padding: 10px 12px;
+            }
+
+            .map-info h3 {
+                font-size: 12px;
+            }
+
+            .map-info p {
+                font-size: 10px;
+            }
+
+        }
+    </style>
 </head>
+
 <body>
-  <header>
-    <h1>Peta Sekolah</h1>
-    <select id="filter-jenjang">
-      <option value="">Semua jenjang</option>
-      <option value="SD">SD</option>
-      <option value="SMP">SMP</option>
-      <option value="SMA">SMA</option>
-      <option value="SMK">SMK</option>
-    </select>
-    <select id="filter-status">
-      <option value="">Semua Status</option>
-      <option value="Negeri">Negeri</option>
-      <option value="Swasta">Swasta</option>
-    </select>
-    <span id="jumlah"></span>
-    
-    <div class="search-box">
-      <input 
-        type="text" 
-        id="input-cari" 
-        placeholder="Cari nama sekolah..." 
-        autocomplete="off"
-      >
-      <div id="rekomendasi-list" class="rekomendasi-box"></div>
-    </div>
 
-    <a href="{{ route('admin.sekolah.index') }}">Kelola Data</a>
-  </header>
+    <!-- ================= HEADER ================= -->
 
-  <div id="map"></div>
+    <header class="navbar">
 
-  <!-- JS Leaflet & Plugin -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+        <!-- BRAND -->
+        <div class="brand">
 
-  <script>
-    let dataSekolahList = [];
+            <div class="brand-icon">
+                <i class="bi bi-geo-alt-fill"></i>
+            </div>
 
-    // --- 1. DEKLARASI PETA DASAR (BASEMAPS) ---
-    const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; OpenStreetMap contributors'
-    });
+            <div class="brand-text">
+                <h1>WebGIS Peta Sekolah</h1>
+                <p>Sistem Informasi Geografis Sekolah</p>
+            </div>
 
-    const satelit = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 19,
-      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-    });
+        </div>
 
-    const topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-      maxZoom: 17,
-      attribution: 'Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap (CC-BY-SA)'
-    });
+        <!-- CONTROLS -->
+        <div class="header-controls">
 
-    // Inisialisasi Peta dengan Basemap Utama (OSM)
-    const map = L.map('map', {
-      center: [-3.3194, 114.5908],
-      zoom: 12,
-      layers: [osm] // Basemap default
-    });
+            <!-- SEARCH -->
+            <div class="search-box">
 
-    // --- 2. DEKLARASI MARKER CLUSTER ---
-    const markersCluster = L.markerClusterGroup();
-    map.addLayer(markersCluster);
+                <i class="bi bi-search"></i>
 
-    // --- 3. MENAMBAHKAN KONTROL LAYER ---
-    const baseMaps = {
-      "OpenStreetMap": osm,
-      "Satelit (Esri)": satelit,
-      "Topografi": topo
-    };
+                <input
+                    type="text"
+                    id="input-cari"
+                    class="search-input"
+                    placeholder="Cari nama sekolah..."
+                    autocomplete="off"
+                    aria-label="Cari nama sekolah"
+                >
 
-    const overlayMaps = {
-      "Titik Sekolah": markersCluster
-    };
+                <div
+                    id="rekomendasi-list"
+                    class="rekomendasi-box"
+                ></div>
 
-    L.control.layers(baseMaps, overlayMaps, { position: 'topright' }).addTo(map);
+            </div>
 
-    function esc(teks) {
-      const d = document.createElement('div');
-      d.textContent = teks ?? '';
-      return d.innerHTML;
-    }
+            <!-- FILTER -->
+            <div class="filter-wrapper">
 
-    const lapisan = L.geoJSON(null, {
-      onEachFeature: (fitur, layer) => {
-        const p = fitur.properties;
-        const [lng, lat] = fitur.geometry.coordinates;
+                <select
+                    id="filter-jenjang"
+                    class="filter-select"
+                    aria-label="Filter jenjang pendidikan"
+                >
+                    <option value="">Semua Jenjang</option>
+                    <option value="SD">SD</option>
+                    <option value="SMP">SMP</option>
+                    <option value="SMA">SMA</option>
+                    <option value="SMK">SMK</option>
+                </select>
 
-        dataSekolahList.push({
-          nama: p.nama,
-          jenjang: p.jenjang,
-          status: p.status,
-          layer: layer,
-          latlng: [lat, lng]
-        });
+                <select
+                    id="filter-status"
+                    class="filter-select"
+                    aria-label="Filter status sekolah"
+                >
+                    <option value="">Semua Status</option>
+                    <option value="Negeri">Negeri</option>
+                    <option value="Swasta">Swasta</option>
+                </select>
 
-        layer.bindPopup(`
-          <strong>${esc(p.nama)}</strong><br>
-          NPSN: ${esc(p.npsn)}<br>
-          ${esc(p.jenjang)} ${esc(p.status)}<br>
-          ${esc(p.alamat)}, ${esc(p.kecamatan)}<br>
-          Telp: ${esc(p.telepon) || '-'}<br>
-          <small>Koordinat: ${lat}, ${lng}</small>
-        `);
-      }
-    });
+            </div>
 
-    async function muatData() {
-      try {
-        const jenjang = document.getElementById('filter-jenjang')?.value || '';
-        const status = document.getElementById('filter-status')?.value || '';
+            <!-- RESET -->
+            <button
+                class="btn-reset"
+                id="btn-reset"
+                title="Reset Filter"
+            >
+                <i class="bi bi-arrow-counterclockwise"></i>
+                <span>Reset</span>
+            </button>
 
-        const url = `{{ route('peta.data') }}?jenjang=${jenjang}&status=${status}`;
-        const respon = await fetch(url);
-        const data = await respon.json();
-        
-        dataSekolahList = [];
-        lapisan.clearLayers();
-        markersCluster.clearLayers();
+            <!-- STATISTIK -->
+            <div class="stat-header">
 
-        lapisan.addData(data);
-        markersCluster.addLayer(lapisan);
-        
-        document.getElementById('jumlah').textContent = (data.features ? data.features.length : 0) + ' sekolah';
-        
-        if (data.features && data.features.length > 0) {
-          map.fitBounds(markersCluster.getBounds().pad(0.1));
-        }
-      } catch (error) {
-        console.error('Gagal memuat dataGeoJSON:', error);
-      }
-    }
+                <i class="bi bi-buildings"></i>
 
-    // --- SEARCH REKOMENDASI ---
-    const inputCari = document.getElementById('input-cari');
-    const boxRekomendasi = document.getElementById('rekomendasi-list');
+                <strong id="jumlah">0</strong>
 
-    if (inputCari && boxRekomendasi) {
-      inputCari.addEventListener('input', (e) => {
-        const kataKunci = e.target.value.trim().toLowerCase();
-        boxRekomendasi.innerHTML = '';
+                <span>Sekolah</span>
 
-        if (kataKunci === '') {
-          boxRekomendasi.style.display = 'none';
-          return;
-        }
+            </div>
 
-        const hasilFilter = dataSekolahList.filter(item => 
-          item.nama.toLowerCase().includes(kataKunci)
+            <!-- ADMIN -->
+            <a
+                href="{{ route('admin.sekolah.index') }}"
+                class="btn-admin"
+                title="Kelola Data Sekolah"
+            >
+                <i class="bi bi-gear-fill"></i>
+                <span>Kelola Data</span>
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================= MAP ================= -->
+
+    <main class="map-container">
+
+        <div class="map-info">
+
+            <h3>
+                <i class="bi bi-map"></i>
+                Peta Persebaran Sekolah
+            </h3>
+
+            <p>
+                Klik titik lokasi untuk melihat informasi sekolah
+            </p>
+
+        </div>
+
+        <div id="map"></div>
+
+    </main>
+
+
+    <!-- ================= JAVASCRIPT ================= -->
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+    <script>
+
+        /* ================= ELEMENT ================= */
+
+        const inputCari = document.getElementById('input-cari');
+
+        const boxRekomendasi =
+            document.getElementById('rekomendasi-list');
+
+        const filterJenjang =
+            document.getElementById('filter-jenjang');
+
+        const filterStatus =
+            document.getElementById('filter-status');
+
+        const jumlahElement =
+            document.getElementById('jumlah');
+
+        let dataSekolahList = [];
+        let requestController = null;
+
+
+        /* ================= BASEMAP ================= */
+
+        const osm = L.tileLayer(
+            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap contributors'
+            }
         );
 
-        if (hasilFilter.length === 0) {
-          boxRekomendasi.innerHTML = '<div class="rekomendasi-item" style="cursor:default; color:#94a3b8;">Sekolah tidak ditemukan</div>';
-          boxRekomendasi.style.display = 'block';
-          return;
-        }
+        const satelit = L.tileLayer(
+            'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+            {
+                maxZoom: 19,
+                attribution: 'Tiles &copy; Esri'
+            }
+        );
 
-        hasilFilter.forEach(item => {
-          const div = document.createElement('div');
-          div.className = 'rekomendasi-item';
-          div.innerHTML = `
-            <span>${esc(item.nama)}</span>
-            <span class="tag-info">${esc(item.jenjang)} - ${esc(item.status)}</span>
-          `;
+        const topo = L.tileLayer(
+            'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+            {
+                maxZoom: 17,
+                attribution: '&copy; OpenTopoMap'
+            }
+        );
 
-          div.addEventListener('click', () => {
-            inputCari.value = item.nama;
-            boxRekomendasi.style.display = 'none';
 
-            markersCluster.zoomToShowLayer(item.layer, () => {
-              item.layer.openPopup();
-            });
-          });
+        /* ================= MAP ================= */
 
-          boxRekomendasi.appendChild(div);
+        const map = L.map('map', {
+
+            center: [-3.3194, 114.5908],
+            zoom: 12,
+
+            layers: [osm],
+
+            zoomControl: false
+
         });
 
-        boxRekomendasi.style.display = 'block';
-      });
+        L.control.zoom({
+            position: 'bottomright'
+        }).addTo(map);
 
-      document.addEventListener('click', (e) => {
-        if (!e.target.closest('.search-box')) {
-          boxRekomendasi.style.display = 'none';
+
+        /* ================= MARKER CLUSTER ================= */
+
+        const markersCluster = L.markerClusterGroup({
+
+            showCoverageOnHover: false,
+
+            spiderfyOnMaxZoom: true,
+
+            maxClusterRadius: 50
+
+        });
+
+        map.addLayer(markersCluster);
+
+
+        /* ================= LAYER CONTROL ================= */
+
+        const baseMaps = {
+
+            "OpenStreetMap": osm,
+
+            "Satelit (Esri)": satelit,
+
+            "Topografi": topo
+
+        };
+
+        const overlayMaps = {
+
+            "Titik Sekolah": markersCluster
+
+        };
+
+        L.control.layers(
+            baseMaps,
+            overlayMaps,
+            {
+                position: 'topright',
+                collapsed: true
+            }
+        ).addTo(map);
+
+
+        /* ================= ESCAPE HTML ================= */
+
+        function esc(teks) {
+
+            const div = document.createElement('div');
+
+            div.textContent = teks ?? '';
+
+            return div.innerHTML;
+
         }
-      });
-    }
 
-    document.getElementById('filter-jenjang')?.addEventListener('change', muatData);
-    document.getElementById('filter-status')?.addEventListener('change', muatData);
 
-    muatData();
-  </script>
+        /* ================= GEOJSON ================= */
+
+        const lapisan = L.geoJSON(null, {
+
+            filter: (fitur) => {
+
+                if (
+                    !fitur.geometry ||
+                    fitur.geometry.type !== 'Point'
+                ) {
+                    return false;
+                }
+
+                const koordinat = fitur.geometry.coordinates;
+
+                return (
+                    Array.isArray(koordinat) &&
+                    koordinat.length >= 2 &&
+                    Number.isFinite(koordinat[0]) &&
+                    Number.isFinite(koordinat[1]) &&
+                    koordinat[0] >= -180 &&
+                    koordinat[0] <= 180 &&
+                    koordinat[1] >= -90 &&
+                    koordinat[1] <= 90
+                );
+
+            },
+
+            onEachFeature: (fitur, layer) => {
+
+                const p = fitur.properties || {};
+
+                const [lng, lat] =
+                    fitur.geometry.coordinates;
+
+                const sekolah = {
+
+                    nama: p.nama || 'Tanpa Nama',
+
+                    jenjang: p.jenjang || '-',
+
+                    status: p.status || '-',
+
+                    layer: layer,
+
+                    latlng: [lat, lng]
+
+                };
+
+                dataSekolahList.push(sekolah);
+
+                layer.bindPopup(`
+
+                    <div class="popup-title">
+                        ${esc(p.nama || 'Tanpa Nama')}
+                    </div>
+
+                    <div class="popup-badges">
+
+                        <span class="badge">
+                            ${esc(p.jenjang || '-')}
+                        </span>
+
+                        <span class="badge badge-status">
+                            ${esc(p.status || '-')}
+                        </span>
+
+                    </div>
+
+                    <div class="popup-row">
+
+                        <i class="bi bi-card-text"></i>
+
+                        <span>
+                            <b>NPSN:</b>
+                            ${esc(p.npsn || '-')}
+                        </span>
+
+                    </div>
+
+                    <div class="popup-row">
+
+                        <i class="bi bi-geo-alt"></i>
+
+                        <span>
+                            ${esc(p.alamat || '-')},
+                            ${esc(p.kecamatan || '-')}
+                        </span>
+
+                    </div>
+
+                    <div class="popup-row">
+
+                        <i class="bi bi-telephone"></i>
+
+                        <span>
+                            ${esc(p.telepon || '-')}
+                        </span>
+
+                    </div>
+
+                    <div class="popup-row">
+
+                        <i class="bi bi-crosshair"></i>
+
+                        <span>
+                            ${lat}, ${lng}
+                        </span>
+
+                    </div>
+
+                `);
+
+            }
+
+        });
+
+
+        /* ================= LOAD DATA ================= */
+
+        async function muatData() {
+
+            if (requestController) {
+                requestController.abort();
+            }
+
+            const controller = new AbortController();
+
+            requestController = controller;
+
+            const params = new URLSearchParams({
+
+                jenjang: filterJenjang.value,
+
+                status: filterStatus.value
+
+            });
+
+            const url =
+                `{{ route('peta.data') }}?${params}`;
+
+            jumlahElement.textContent = '...';
+
+            try {
+
+                const respon = await fetch(url, {
+
+                    signal: controller.signal,
+
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+
+                });
+
+                if (!respon.ok) {
+
+                    throw new Error(
+                        `HTTP ${respon.status}`
+                    );
+
+                }
+
+                const data = await respon.json();
+
+                if (
+                    data.type !== 'FeatureCollection' ||
+                    !Array.isArray(data.features)
+                ) {
+
+                    throw new Error(
+                        'Format GeoJSON tidak valid'
+                    );
+
+                }
+
+                dataSekolahList = [];
+
+                lapisan.clearLayers();
+
+                markersCluster.clearLayers();
+
+                lapisan.addData(data);
+
+                markersCluster.addLayer(lapisan);
+
+                jumlahElement.textContent =
+                    dataSekolahList.length.toLocaleString('id-ID');
+
+                inputCari.value = '';
+
+                boxRekomendasi.style.display = 'none';
+
+                if (lapisan.getLayers().length > 0) {
+
+                    map.fitBounds(
+
+                        lapisan.getBounds().pad(0.15),
+
+                        {
+                            maxZoom: 15
+                        }
+
+                    );
+
+                }
+
+            } catch (error) {
+
+                if (error.name === 'AbortError') {
+                    return;
+                }
+
+                console.error(
+                    'Gagal memuat data GeoJSON:',
+                    error
+                );
+
+                jumlahElement.textContent = 'Error';
+
+            } finally {
+
+                if (requestController === controller) {
+                    requestController = null;
+                }
+
+            }
+
+        }
+
+
+        /* ================= SEARCH ================= */
+
+        inputCari.addEventListener('input', function () {
+
+            const kataKunci =
+                this.value.trim().toLowerCase();
+
+            boxRekomendasi.innerHTML = '';
+
+            if (!kataKunci) {
+
+                boxRekomendasi.style.display = 'none';
+
+                return;
+
+            }
+
+            const hasil = dataSekolahList.filter(item =>
+
+                item.nama.toLowerCase().includes(kataKunci)
+
+            ).slice(0, 20);
+
+
+            if (hasil.length === 0) {
+
+                boxRekomendasi.innerHTML = `
+
+                    <div class="rekomendasi-item">
+
+                        <div class="rekomendasi-nama">
+                            Sekolah tidak ditemukan
+                        </div>
+
+                    </div>
+
+                `;
+
+                boxRekomendasi.style.display = 'block';
+
+                return;
+
+            }
+
+
+            hasil.forEach(item => {
+
+                const div = document.createElement('div');
+
+                div.className = 'rekomendasi-item';
+
+                div.innerHTML = `
+
+                    <div class="rekomendasi-nama">
+                        ${esc(item.nama)}
+                    </div>
+
+                    <div class="rekomendasi-info">
+
+                        <i class="bi bi-mortarboard"></i>
+
+                        ${esc(item.jenjang)}
+
+                        &bull;
+
+                        ${esc(item.status)}
+
+                    </div>
+
+                `;
+
+
+                div.addEventListener('click', () => {
+
+                    inputCari.value = item.nama;
+
+                    boxRekomendasi.style.display = 'none';
+
+                    if (!map.hasLayer(markersCluster)) {
+
+                        map.addLayer(markersCluster);
+
+                    }
+
+                    markersCluster.zoomToShowLayer(
+
+                        item.layer,
+
+                        () => {
+
+                            item.layer.openPopup();
+
+                        }
+
+                    );
+
+                });
+
+
+                boxRekomendasi.appendChild(div);
+
+            });
+
+
+            boxRekomendasi.style.display = 'block';
+
+        });
+
+
+        /* ================= FILTER ================= */
+
+        filterJenjang.addEventListener(
+            'change',
+            muatData
+        );
+
+        filterStatus.addEventListener(
+            'change',
+            muatData
+        );
+
+
+        /* ================= RESET ================= */
+
+        document.getElementById('btn-reset')
+            .addEventListener('click', () => {
+
+                filterJenjang.value = '';
+
+                filterStatus.value = '';
+
+                inputCari.value = '';
+
+                boxRekomendasi.style.display = 'none';
+
+                muatData();
+
+            });
+
+
+        /* ================= CLOSE SEARCH ================= */
+
+        document.addEventListener('click', (event) => {
+
+            if (!event.target.closest('.search-box')) {
+
+                boxRekomendasi.style.display = 'none';
+
+            }
+
+        });
+
+
+        /* ================= RESIZE ================= */
+
+        window.addEventListener('resize', () => {
+
+            map.invalidateSize();
+
+        });
+
+
+        /* ================= INITIAL LOAD ================= */
+
+        muatData();
+
+    </script>
+
 </body>
 </html>
