@@ -112,11 +112,35 @@
       ? [parseFloat(latInput.value), parseFloat(lngInput.value)]
       : [-1.8374614675638135, 115.63343545771596];
 
-    const map = L.map('map-picker').setView(pusat, sudahAda ? 16 : 13);
+    const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '&copy; OpenStreetMap contributors'
+    });
+    const satelit = L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      {
+        maxZoom: 18,
+        attribution: 'Tiles &copy; Esri'
+      }
+    );
+    const topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+      maxZoom: 17,
+      attribution: '&copy; OpenTopoMap'
+    });
 
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    const map = L.map('map-picker', {
+      center: pusat,
+      zoom: sudahAda ? 16 : 13,
+      layers: [osm]
+    });
+
+    L.control.layers({
+      'OpenStreetMap': osm,
+      'Satelit (Esri)': satelit,
+      'Topografi': topo
+    }, null, {
+      position: 'topright',
+      collapsed: true
     }).addTo(map);
 
     const marker = L.marker(pusat, { draggable: true }).addTo(map);

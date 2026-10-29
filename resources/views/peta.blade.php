@@ -714,7 +714,7 @@
         const osm = L.tileLayer(
             'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
             {
-                maxZoom: 19,
+                maxZoom: 18,
                 attribution: '&copy; OpenStreetMap contributors'
             }
         );
@@ -722,7 +722,7 @@
         const satelit = L.tileLayer(
             'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
             {
-                maxZoom: 19,
+                maxZoom: 18,
                 attribution: 'Tiles &copy; Esri'
             }
         );
