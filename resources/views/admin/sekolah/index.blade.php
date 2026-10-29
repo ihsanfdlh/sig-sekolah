@@ -9,7 +9,6 @@
  </a>
 </div>
 <form method="GET" class="mb-4 flex gap-2">
-Modul Praktikum SIG - Aplikasi Pendataan Sekolah Halaman 13
  <input type="text" name="q" value="{{ request('q') }}"
  placeholder="Cari nama, NPSN, atau kecamatan"
  class="border rounded px-3 py-2 w-80">
@@ -31,11 +30,21 @@ Modul Praktikum SIG - Aplikasi Pendataan Sekolah Halaman 13
  </thead>
  <tbody>
  @forelse ($sekolahs as $s)
+ @php
+        $jenjangStyle = [
+          'SD'     => 'bg-red-100 text-green-800 border-green-300',
+          'SMP'      => 'bg-blue-100 text-red-800 border-red-300',
+          'MTS'   => 'bg-green-100 text-yellow-800 border-yellow-300',
+          'SMK'    => 'bg-orange-100 text-blue-800 border-blue-300',
+          'SMA'     => 'bg-yellow-100',
+        ];
+        $badgeClass = $jenjangStyle[strtoupper($s->jenjang)] ?? 'bg-green-100 text-gray-800 border-gray-300';
+      @endphp
  <tr class="border-t">
  <td class="p-3">{{ $sekolahs->firstItem() + $loop->index }}</td>
  <td class="p-3">{{ $s->npsn }}</td>
  <td class="p-3">{{ $s->nama }}</td>
- <td class="p-3">{{ $s->jenjang }}</td>
+ <td class="p-3 {{ $badgeClass }}">{{ $s->jenjang }}</td>
  <td class="p-3">{{ $s->status }}</td>
  <td class="p-3">{{ $s->kecamatan }}</td>
  <td class="p-3 font-mono text-xs">
