@@ -9,6 +9,10 @@
         'SMK' => 'bg-orange-100 text-orange-800 border-orange-300',
         'SMA' => 'bg-yellow-100 text-yellow-800 border-yellow-300',
     ];
+    $statusStyle = [
+        'Swasta' => 'bg-green-100 text-green-800 border-green-300',
+        'Negeri' => 'bg-blue-100 text-blue-800 border-blue-300'
+    ];
 @endphp
 <div class="page-heading">
     <div>
@@ -58,7 +62,8 @@
                                 {{ $s->jenjang }}
                             </span>
                         </td>
-                        <td><span class="school-badge school-badge-status">{{ $s->status }}</span></td>
+                        <td><span class="school-badge {{ $statusStyle[($s->status)] ?? 'bg-green-100 text-gray-800 border-gray-300' }}">
+                            {{ $s->status }}</span></td>
                         <td>{{ $s->kecamatan }}</td>
                         <td class="coordinates">{{ $s->latitude }}, {{ $s->longitude }}</td>
                         <td>
