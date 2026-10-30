@@ -1,29 +1,31 @@
 {
     "version": 2,
       "framework": null,
+    "installCommand": "npm ci",
+    "buildCommand": "npm run build",
     "functions": {
         "api/index.php": { "runtime": "vercel-php@0.8.0" }
     },
     "routes": [
         {
             "src": "/build/(.*)",
-            "dest": "/public/build/"
+            "dest": "/public/build/$1"
         },
         {
             "src": "/css/(.*)",
-            "dest": "/public/css/"
+            "dest": "/public/css/$1"
         },
         {
             "src": "/images/(.*)",
-            "dest": "/public/images/"
+            "dest": "/public/images/$1"
         },
         {
             "src": "/js/(.*)",
-            "dest": "/public/js/"
+            "dest": "/public/js/$1"
         },
         {
             "src": "/vendors/(.*)",
-            "dest": "/public/vendors/"
+            "dest": "/public/vendors/$1"
         },
         {
             "src": "/(.*)",
