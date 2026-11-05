@@ -1,6 +1,10 @@
 <?php
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Foundation\Auth\User;
+
 class Sekolah extends Model
 {
     protected $fillable = [
@@ -13,5 +17,13 @@ class Sekolah extends Model
         'latitude' => 'float',
         'longitude' => 'float',
     ];
+    }
+    public function profil(): HasOne
+    {
+    return $this->hasOne(ProfilSekolah::class);
+    }
+    public function users(): HasMany
+    {
+    return $this->hasMany(User::class);
     }
 }
