@@ -31,6 +31,9 @@
                     @if(auth()->user()->isAdmin() && Route::has('admin.sekolah.index'))
                         <a href="{{ route('admin.sekolah.index') }}" @class(['rounded-lg px-4 py-2.5 text-sm font-medium transition', 'bg-blue-50 text-blue-700' => request()->routeIs('admin.sekolah.*'), 'text-slate-600 hover:bg-slate-100' => !request()->routeIs('admin.sekolah.*')])>Data Sekolah</a>
                     @endif
+                    @if (auth()->user()->isAdmin())
+                        <a href="{{ route('admin.users.index') }}" class="rounded-lg px-4 py-3 text-sm font-medium hover:bg-blue-50">Pengguna</a>
+                    @endif
                     @if(auth()->user()->isDinas() && Route::has('dinas.sekolah.index'))
                         <a href="{{ route('dinas.sekolah.index') }}" @class(['rounded-lg px-4 py-2.5 text-sm font-medium transition', 'bg-blue-50 text-blue-700' => request()->routeIs('dinas.sekolah.*'), 'text-slate-600 hover:bg-slate-100' => !request()->routeIs('dinas.sekolah.*')])>Data Sekolah</a>
                     @endif
@@ -69,6 +72,9 @@
                 <a href="{{ route('peta.index') }}" class="rounded-lg px-4 py-3 text-sm font-medium hover:bg-blue-50">Peta Publik</a>
                 @auth
                     <a href="{{ route('dashboard') }}" class="rounded-lg px-4 py-3 text-sm font-medium hover:bg-blue-50">Dashboard</a>
+                    @if (auth()->user()->isAdmin())
+                        <a href="{{ route('admin.users.index') }}" class="rounded-lg px-4 py-3 text-sm font-medium hover:bg-blue-50">Pengguna</a>
+                    @endif
                     @if(auth()->user()->isAdmin() && Route::has('admin.sekolah.index'))
                         <a href="{{ route('admin.sekolah.index') }}" class="rounded-lg px-4 py-3 text-sm font-medium hover:bg-blue-50">Data Sekolah</a>
                     @endif
