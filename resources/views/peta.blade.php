@@ -193,15 +193,15 @@
                     status:p.status || '-', layer, latlng:[lat,lng]
                 });
                 layer.bindPopup(`
-                    <div class="popup-title">${esc(p.nama || 'Tanpa Nama')}</div>
-                    <div class="popup-badges">
-                        <span class="badge">${esc(p.jenjang || '-')}</span>
-                        <span class="badge badge-status">${esc(p.status || '-')}</span>
-                    </div>
-                    <div class="popup-row"><i class="bi bi-card-text"></i><span><b>NPSN:</b> ${esc(p.npsn || '-')}</span></div>
-                    <div class="popup-row"><i class="bi bi-geo-alt"></i><span>${esc(p.alamat || '-')}, ${esc(p.kecamatan || '-')}</span></div>
-                    <div class="popup-row"><i class="bi bi-telephone"></i><span>${esc(p.telepon || '-')}</span></div>
-                    <div class="popup-row"><i class="bi bi-crosshair"></i><span>${lat}, ${lng}</span></div>
+                    <strong>${esc(p.nama)}</strong><br>
+                    NPSN: ${esc(p.npsn)}<br>
+                    ${esc(p.jenjang)} - ${esc(p.status)}<br>
+                    ${esc(p.alamat)}, ${esc(p.kecamatan)}<br>
+                    Telp: ${esc(p.telepon) || '-'}<br>
+                    Kepala sekolah: ${esc(p.kepala_sekolah) || '-'}<br>
+                    Akreditasi: ${esc(p.akreditasi) || '-'}<br>
+                    Siswa: ${p.jumlah_siswa ?? '-'} | Guru: ${p.jumlah_guru ?? '-'}<br>
+                    <small>Koordinat: ${lat}, ${lng}</small>
                 `);
             }
         });

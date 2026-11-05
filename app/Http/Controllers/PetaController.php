@@ -21,17 +21,21 @@ class PetaController extends Controller
 
     public function geojson(Request $request)
     {
-        $features = Sekolah::query()
+        $features = Sekolah::with('profil')
             ->when($request->jenjang, fn ($q, $j) => $q->where('jenjang', $j))
             ->when($request->status, fn ($q, $s) => $q->where('status', $s))
-            ->when($request->kecamatan, fn ($q, $s) => $q->where('kecamatan', $s))
+            ->when($request->kecamatan, fn ($q, $k) => $q->where('kecamatan', $k))
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
             ->get()
             ->map(fn ($s) => [
                 'type' => 'Feature',
                 'geometry' => [
                     'type' => 'Point',
-                    // GeoJSON: urutan [longitude, latitude]
-                    'coordinates' => [(float) $s->longitude, (float) $s->latitude],
+                    'coordinates' => [
+                        (float) $s->longitude,
+                        (float) $s->latitude
+                    ],
                 ],
                 'properties' => [
                     'npsn' => $s->npsn,
@@ -41,12 +45,16 @@ class PetaController extends Controller
                     'alamat' => $s->alamat,
                     'kecamatan' => $s->kecamatan,
                     'telepon' => $s->telepon,
+                    'kepala_sekolah' => $s->profil?->kepala_sekolah,
+                    'akreditasi' => $s->profil?->akreditasi,
+                    'jumlah_siswa' => $s->profil?->jumlah_siswa,
+                    'jumlah_guru' => $s->profil?->jumlah_guru,
                 ],
             ]);
 
         return response()->json([
             'type' => 'FeatureCollection',
-            'features' => $features,
+            'features' => $features->values(),
         ]);
     }
 }
