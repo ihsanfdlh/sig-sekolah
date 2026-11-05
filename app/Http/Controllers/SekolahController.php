@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Sekolah;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class SekolahController extends Controller
@@ -13,8 +13,8 @@ class SekolahController extends Controller
     {
         $sekolahs = Sekolah::query()
             ->when($request->q, function ($query, $q) {
-                $query->where(function ($w) use ($q) {
-                    $w->where('nama', 'like', "%{$q}%")
+                $query->where(function ($sub) use ($q) {
+                    $sub->where('nama', 'like', "%{$q}%")
                         ->orWhere('npsn', 'like', "%{$q}%")
                         ->orWhere('kecamatan', 'like', "%{$q}%");
                 });
@@ -28,50 +28,77 @@ class SekolahController extends Controller
 
     public function create()
     {
-        return view('admin.sekolah.create');
+        return view('admin.sekolah.create', [
+            'sekolah' => new Sekolah(),
+        ]);
     }
 
     public function store(Request $request)
     {
-        Sekolah::create($request->validate($this->rules()));
+        $data = $request->validate([
+            'npsn'      => ['required', 'digits:8', 'unique:sekolahs,npsn'],
+            'nama'      => ['required', 'string', 'max:255'],
+            'jenjang'   => ['required', Rule::in(['SD', 'SMP', 'SMA', 'SMK'])],
+            'status'    => ['required', Rule::in(['Negeri', 'Swasta'])],
+            'alamat'    => ['required', 'string'],
+            'kecamatan' => ['required', 'string', 'max:100'],
+            'telepon'   => ['nullable', 'string', 'max:20'],
+            'latitude'  => ['required', 'numeric', 'between:-90,90'],
+            'longitude' => ['required', 'numeric', 'between:-180,180'],
+        ]);
 
-        return redirect()->route('admin.sekolah.index')
+        Sekolah::create($data);
+
+        return redirect()->route('dinas.sekolah.index')
             ->with('success', 'Data sekolah berhasil ditambahkan.');
     }
 
     public function edit(Sekolah $sekolah)
     {
+        Gate::authorize('update', $sekolah);
+
         return view('admin.sekolah.edit', compact('sekolah'));
     }
 
     public function update(Request $request, Sekolah $sekolah)
     {
-        $sekolah->update($request->validate($this->rules($sekolah->id)));
+        Gate::authorize('update', $sekolah);
 
-        return redirect()->route('admin.sekolah.index')
-            ->with('success', 'Data sekolah berhasil diperbarui.');
+        $rules = [
+            'nama'      => ['required', 'string', 'max:255'],
+            'jenjang'   => ['required', Rule::in(['SD', 'SMP', 'SMA', 'SMK'])],
+            'status'    => ['required', Rule::in(['Negeri', 'Swasta'])],
+            'alamat'    => ['required', 'string'],
+            'kecamatan' => ['required', 'string', 'max:100'],
+            'telepon'   => ['nullable', 'string', 'max:20'],
+            'latitude'  => ['required', 'numeric', 'between:-90,90'],
+            'longitude' => ['required', 'numeric', 'between:-180,180'],
+        ];
+
+        if (! $request->user()->isSekolah()) {
+            $rules['npsn'] = [
+                'required',
+                'digits:8',
+                Rule::unique('sekolahs', 'npsn')->ignore($sekolah->id),
+            ];
+        }
+
+        $data = $request->validate($rules);
+
+        if ($request->user()->isSekolah()) {
+            unset($data['npsn']);
+        }
+
+        $sekolah->update($data);
+
+        return back()->with('success', 'Data sekolah berhasil diperbarui.');
     }
 
     public function destroy(Sekolah $sekolah)
     {
         $sekolah->delete();
 
-        return redirect()->route('admin.sekolah.index')
+        return redirect()->route('dinas.sekolah.index')
             ->with('success', 'Data sekolah berhasil dihapus.');
-    }
-
-    private function rules(?int $id = null): array
-    {
-        return [
-            'npsn' => ['required', 'digits:8', Rule::unique('sekolahs', 'npsn')->ignore($id)],
-            'nama' => ['required', 'string', 'max:255'],
-            'jenjang' => ['required', Rule::in(['SD', 'SMP', 'MTS', 'SMA', 'SMK'])],
-            'status' => ['required', Rule::in(['Negeri', 'Swasta'])],
-            'alamat' => ['required', 'string'],
-            'kecamatan' => ['required', 'string', 'max:100'],
-            'telepon' => ['nullable', 'string', 'max:20'],
-            'latitude' => ['required', 'numeric', 'between:-90,90'],
-            'longitude' => ['required', 'numeric', 'between:-180,180'],
-        ];
     }
 }

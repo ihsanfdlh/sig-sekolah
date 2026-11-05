@@ -21,8 +21,9 @@
           {{ $label }}
         </label>
         <input type="text" id="{{ $name }}" name="{{ $name }}"
-          value="{{ old($name, $sekolah->$name ?? '') }}"
-          class="{{ $cls }}">
+          value="{{ old($name, $sekolah->$name) }}"
+          @readonly($name === 'npsn' && auth()->user()->isSekolah())
+          class="{{ $cls }}"
         @error($name)
           <p class="field-error">{{ $message }}</p>
         @enderror
@@ -94,9 +95,10 @@
       <button type="submit" class="button">
         Simpan
       </button>
-      <a href="{{ route('admin.sekolah.index') }}" class="button button-secondary">
-        Batal
-      </a>
+      <a href="{{ auth()->user()->isDinas()
+      ? route('dinas.sekolah.index')
+      : route('dashboard') }}"
+      class="px-5 py-2 bg-gray-300 rounded">Batal</a>
     </div>
   </div>
 </div>

@@ -7,7 +7,7 @@
         <p>Lengkapi profil sekolah dan tentukan titik lokasinya.</p>
     </div>
 </div>
-<form method="POST" action="{{ route('admin.sekolah.store') }}">
+<form method="POST" action="{{ route('dinas.sekolah.store') }}">
  @csrf
  @include('admin.sekolah._form', ['sekolah' => new \App\Models\Sekolah])
 </form>

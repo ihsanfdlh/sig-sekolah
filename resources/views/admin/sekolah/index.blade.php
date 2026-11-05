@@ -19,7 +19,7 @@
         <h1>Data Sekolah</h1>
         <p>Kelola informasi sekolah yang tampil pada peta publik.</p>
     </div>
-    <a href="{{ route('admin.sekolah.create') }}" class="button">
+    <a href="{{ route('dinas.sekolah.create') }}" class="button">
         + Tambah Sekolah
     </a>
 </div>
@@ -68,10 +68,10 @@
                         <td class="coordinates">{{ $s->latitude }}, {{ $s->longitude }}</td>
                         <td>
                             <div class="row-actions">
-                                <a href="{{ route('admin.sekolah.edit', $s) }}">Ubah</a>
+                                <a href="{{ route('sekolah.edit', $s) }}">Ubah</a>
                                 <form
                                     method="POST"
-                                    action="{{ route('admin.sekolah.destroy', $s) }}"
+                                    action="{{ route('dinas.sekolah.destroy', $s) }}"
                                     onsubmit="return confirm('Hapus data ini?')"
                                 >
                                     @csrf

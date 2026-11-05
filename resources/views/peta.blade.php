@@ -115,7 +115,14 @@
             </div>
             <button class="btn-reset" id="btn-reset" title="Reset Filter"><i class="bi bi-arrow-counterclockwise"></i><span>Reset</span></button>
             <div class="stat-header"><i class="bi bi-buildings"></i><strong id="jumlah">0</strong><span>Sekolah</span></div>
-            <a href="{{ route('admin.sekolah.index') }}" class="btn-admin" title="Kelola Data Sekolah"><i class="bi bi-gear-fill"></i><span>Kelola Data</span></a>
+            {{-- <a href="{{ route('admin.sekolah.index') }}" class="btn-admin" title="Kelola Data Sekolah">
+                <i class="bi bi-gear-fill"></i><span>Kelola Data</span>
+            </a> --}}
+            @auth
+                <a href="{{ route('dashboard') }}" class="btn-admin">Dashboard</a>
+            @else
+                <a href="{{ route('login') }}" class="btn-admin">Masuk</a>
+            @endauth
             @auth
                 <form method="POST" action="{{ route('logout') }}" class="ml-auto">
                     @csrf
