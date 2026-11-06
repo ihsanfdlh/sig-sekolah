@@ -29,21 +29,21 @@ class SekolahController extends Controller
     public function create()
     {
         return view('admin.sekolah.create', [
-            'sekolah' => new Sekolah(),
+            'sekolah' => new Sekolah,
         ]);
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'npsn'      => ['required', 'digits:8', 'unique:sekolahs,npsn'],
-            'nama'      => ['required', 'string', 'max:255'],
-            'jenjang'   => ['required', Rule::in(['SD', 'SMP', 'SMA', 'SMK'])],
-            'status'    => ['required', Rule::in(['Negeri', 'Swasta'])],
-            'alamat'    => ['required', 'string'],
+            'npsn' => ['required', 'digits:8', 'unique:sekolahs,npsn'],
+            'nama' => ['required', 'string', 'max:255'],
+            'jenjang' => ['required', Rule::in(['SD', 'SMP', 'MTS', 'SMA', 'SMK'])],
+            'status' => ['required', Rule::in(['Negeri', 'Swasta'])],
+            'alamat' => ['required', 'string'],
             'kecamatan' => ['required', 'string', 'max:100'],
-            'telepon'   => ['nullable', 'string', 'max:20'],
-            'latitude'  => ['required', 'numeric', 'between:-90,90'],
+            'telepon' => ['nullable', 'string', 'max:20'],
+            'latitude' => ['required', 'numeric', 'between:-90,90'],
             'longitude' => ['required', 'numeric', 'between:-180,180'],
         ]);
 
@@ -60,16 +60,19 @@ class SekolahController extends Controller
         return view('admin.sekolah.edit', compact('sekolah'));
     }
 
-
     public function update(Request $request, Sekolah $sekolah)
     {
         Gate::authorize('update', $sekolah);
 
         $data = $request->validate([
             'nama' => ['required', 'string', 'max:255'],
-            'npsn' => ['required', 'string', 'max:20'],
-            'jenjang' => ['required', 'string'],
-            'status' => ['required', 'string'],
+            'npsn' => [
+                'required',
+                'digits:8',
+                Rule::unique('sekolahs', 'npsn')->ignore($sekolah->id),
+            ],
+            'jenjang' => ['required', Rule::in(['SD', 'SMP', 'MTS', 'SMA', 'SMK'])],
+            'status' => ['required', Rule::in(['Negeri', 'Swasta'])],
             'alamat' => ['nullable', 'string'],
             'kecamatan' => ['nullable', 'string'],
             'telepon' => ['nullable', 'string', 'max:30'],
@@ -78,6 +81,8 @@ class SekolahController extends Controller
         ]);
 
         if ($request->user()->isSekolah()) {
+            unset($data['npsn']);
+
             if ($sekolah->latitude === null || $sekolah->longitude === null) {
                 return back()->withErrors([
                     'latitude' => 'Koordinat awal belum tersedia. Hubungi Admin untuk menetapkan lokasi sekolah.',
@@ -94,8 +99,8 @@ class SekolahController extends Controller
             if ($jarak > 100) {
                 return back()->withErrors([
                     'latitude' => 'Perubahan lokasi ditolak. Jarak perpindahan '
-                        . round($jarak, 2)
-                        . ' meter, melebihi batas maksimal 100 meter.',
+                        .round($jarak, 2)
+                        .' meter, melebihi batas maksimal 100 meter.',
                 ])->withInput();
             }
         }
@@ -104,7 +109,6 @@ class SekolahController extends Controller
 
         return redirect()->back()->with('success', 'Data sekolah berhasil diperbarui.');
     }
-
 
     public function destroy(Sekolah $sekolah)
     {
@@ -123,6 +127,7 @@ class SekolahController extends Controller
             + cos(deg2rad($lat1)) * cos(deg2rad($lat2))
             * sin($dLon / 2) ** 2;
         $c = 2 * atan2(sqrt($a), sqrt(max(0, 1 - $a)));
+
         return $radiusBumi * $c;
     }
 }

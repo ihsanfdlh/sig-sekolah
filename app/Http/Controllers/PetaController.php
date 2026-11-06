@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sekolah;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 
 class PetaController extends Controller
@@ -53,6 +52,7 @@ class PetaController extends Controller
                     'logo' => $s->profil?->logo
                         ? asset('storage/' . $s->profil->logo)
                         : null,
+                    'url_profil' => route('sekolah.publik', $s),
                 ],
             ]);
 

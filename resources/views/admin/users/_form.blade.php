@@ -20,7 +20,7 @@
         <label for="role" class="block font-medium">Role</label>
         <select id="role" name="role" class="{{ $cls }}">
             @foreach (['admin' => 'Admin', 'dinas' => 'Dinas Pendidikan', 'sekolah' => 'Sekolah'] as $nilai => $label)
-                <option value="{{ $nilai }}" @selected(old('role', $user->role ?? 'sekolah') === $nilai)>
+                <option value="{{ $nilai }}" @selected(old('role', $user->role?->value ?? 'sekolah') === $nilai)>
                     {{ $label }}
                 </option>
             @endforeach

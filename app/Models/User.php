@@ -2,18 +2,15 @@
 
 namespace App\Models;
 
+use App\Enums\UserRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
-
-    public const ROLE_ADMIN = 'admin';
-    public const ROLE_DINAS = 'dinas';
-    public const ROLE_SEKOLAH = 'sekolah';
 
     protected $fillable = [
         'name',
@@ -34,6 +31,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'role' => UserRole::class,
             'is_active' => 'boolean',
         ];
     }
@@ -47,33 +45,30 @@ class User extends Authenticatable
     // Mengecek apakah user Admin
     public function isAdmin(): bool
     {
-        return $this->role === self::ROLE_ADMIN;
+        return $this->role === UserRole::ADMIN;
     }
 
     // Mengecek apakah user Dinas
     public function isDinas(): bool
     {
-        return $this->role === self::ROLE_DINAS;
+        return $this->role === UserRole::DINAS;
     }
 
     // Mengecek apakah user Sekolah
     public function isSekolah(): bool
     {
-        return $this->role === self::ROLE_SEKOLAH;
+        return $this->role === UserRole::SEKOLAH;
     }
 
     // Menampilkan nama role
     public function roleLabel(): string
     {
-        return match ($this->role) {
-            self::ROLE_ADMIN => 'Admin',
-            self::ROLE_DINAS => 'Dinas Pendidikan',
-            self::ROLE_SEKOLAH => 'Sekolah',
-            default => 'Tidak diketahui',
-        };
+        return $this->role?->label() ?? 'Tidak diketahui';
     }
+
+    // Mengecek status aktif pengguna
     public function isActive(): bool
     {
-        return $this->is_active;
+        return (bool) $this->is_active;
     }
 }
