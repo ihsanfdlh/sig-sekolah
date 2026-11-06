@@ -17,7 +17,7 @@
         <div class="pointer-events-none absolute inset-0 flex items-center justify-end overflow-hidden">
 
             <img
-                src="{{ asset('storage/assets/tut-wuri-handayani.png') }}"
+                src="{{ asset('storage/Assets/tut-wuri-handayani.png') }}"
                 alt=""
                 aria-hidden="true"
                 class="h-64 w-64 translate-x-10 rotate-6 object-contain opacity-10 grayscale brightness-0 invert sm:h-80 sm:w-80 lg:h-96 lg:w-96"

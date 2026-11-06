@@ -11,7 +11,7 @@
         ? \Illuminate\Support\Facades\Storage::disk('public')->url($profil->logo)
         : null;
 
-    $tutWuri = asset('storage/assets/tut-wuri-handayani.png');
+    $tutWuri = asset('storage/Assets/tut-wuri-handayani.png');
 
     $informasi = [
         'NPSN' => $sekolah->npsn,
