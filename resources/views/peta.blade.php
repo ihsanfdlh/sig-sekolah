@@ -176,35 +176,265 @@
             return div.innerHTML;
         }
 
-        const lapisan = L.geoJSON(null, {
-            filter: fitur => {
-                if (!fitur.geometry || fitur.geometry.type !== 'Point') return false;
-                const koordinat = fitur.geometry.coordinates;
-                return Array.isArray(koordinat) && koordinat.length >= 2 &&
-                    Number.isFinite(koordinat[0]) && Number.isFinite(koordinat[1]) &&
-                    koordinat[0] >= -180 && koordinat[0] <= 180 &&
-                    koordinat[1] >= -90 && koordinat[1] <= 90;
-            },
-            onEachFeature: (fitur, layer) => {
-                const p = fitur.properties || {};
-                const [lng, lat] = fitur.geometry.coordinates;
-                dataSekolahList.push({
-                    nama:p.nama || 'Tanpa Nama', jenjang:p.jenjang || '-',
-                    status:p.status || '-', layer, latlng:[lat,lng]
-                });
-                layer.bindPopup(`
-                    <strong>${esc(p.nama)}</strong><br>
-                    NPSN: ${esc(p.npsn)}<br>
-                    ${esc(p.jenjang)} - ${esc(p.status)}<br>
-                    ${esc(p.alamat)}, ${esc(p.kecamatan)}<br>
-                    Telp: ${esc(p.telepon) || '-'}<br>
-                    Kepala sekolah: ${esc(p.kepala_sekolah) || '-'}<br>
-                    Akreditasi: ${esc(p.akreditasi) || '-'}<br>
-                    Siswa: ${p.jumlah_siswa ?? '-'} | Guru: ${p.jumlah_guru ?? '-'}<br>
-                    <small>Koordinat: ${lat}, ${lng}</small>
-                `);
-            }
+        
+const lapisan = L.geoJSON(null, {
+
+    filter: fitur => {
+        if (!fitur.geometry || fitur.geometry.type !== 'Point') {
+            return false;
+        }
+
+        const koordinat = fitur.geometry.coordinates;
+
+        return Array.isArray(koordinat)
+            && koordinat.length >= 2
+            && Number.isFinite(koordinat[0])
+            && Number.isFinite(koordinat[1])
+            && koordinat[0] >= -180
+            && koordinat[0] <= 180
+            && koordinat[1] >= -90
+            && koordinat[1] <= 90;
+    },
+
+    onEachFeature: (fitur, layer) => {
+
+        const p = fitur.properties || {};
+        const [lng, lat] = fitur.geometry.coordinates;
+
+        // Data untuk fitur pencarian sekolah
+        dataSekolahList.push({
+            nama: p.nama || 'Tanpa Nama',
+            jenjang: p.jenjang || '-',
+            status: p.status || '-',
+            layer: layer,
+            latlng: [lat, lng]
         });
+
+        // Logo sekolah
+        const logo = p.logo
+            ? `
+                <img
+                    src="${esc(p.logo)}"
+                    alt="Logo ${esc(p.nama)}"
+                    style="
+                        width:80px;
+                        height:80px;
+                        object-fit:contain;
+                        border-radius:12px;
+                        border:1px solid #e2e8f0;
+                        padding:6px;
+                        background:white;
+                        flex-shrink:0;
+                    "
+                    onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+                >
+                <div style="
+                    display:none;
+                    width:80px;
+                    height:80px;
+                    align-items:center;
+                    justify-content:center;
+                    background:#eff6ff;
+                    border-radius:12px;
+                    font-size:32px;
+                    flex-shrink:0;
+                ">🏫</div>
+            `
+            : `
+                <div style="
+                    display:flex;
+                    width:80px;
+                    height:80px;
+                    align-items:center;
+                    justify-content:center;
+                    background:#eff6ff;
+                    border-radius:12px;
+                    font-size:32px;
+                    flex-shrink:0;
+                ">🏫</div>
+            `;
+
+        // Tampilan popup lengkap
+        const popup = `
+            <div style="
+                width:270px;
+                max-width:100%;
+                font-family:system-ui,sans-serif;
+                color:#0f172a;
+            ">
+
+                <!-- Header sekolah -->
+                <div style="
+                    display:flex;
+                    align-items:center;
+                    gap:12px;
+                    padding-bottom:14px;
+                    margin-bottom:14px;
+                    border-bottom:1px solid #e2e8f0;
+                ">
+
+                    ${logo}
+
+                    <div style="min-width:0;flex:1;">
+
+                        <h3 style="
+                            font-size:15px;
+                            font-weight:700;
+                            line-height:1.4;
+                            margin:0 0 8px;
+                            overflow-wrap:anywhere;
+                        ">
+                            ${esc(p.nama || 'Tanpa Nama')}
+                        </h3>
+
+                        <div style="
+                            display:flex;
+                            gap:5px;
+                            flex-wrap:wrap;
+                        ">
+                            <span class="badge">
+                                ${esc(p.jenjang || '-')}
+                            </span>
+
+                            <span class="badge badge-status">
+                                ${esc(p.status || '-')}
+                            </span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Informasi sekolah -->
+                <div class="popup-row">
+                    <i class="bi bi-upc-scan"></i>
+                    <span>
+                        <b>NPSN:</b>
+                        ${esc(p.npsn || '-')}
+                    </span>
+                </div>
+
+                <div class="popup-row">
+                    <i class="bi bi-geo-alt"></i>
+                    <span>
+                        <b>Alamat:</b>
+                        ${esc(p.alamat || '-')}
+                    </span>
+                </div>
+
+                <div class="popup-row">
+                    <i class="bi bi-map"></i>
+                    <span>
+                        <b>Kecamatan:</b>
+                        ${esc(p.kecamatan || '-')}
+                    </span>
+                </div>
+
+                <div class="popup-row">
+                    <i class="bi bi-telephone"></i>
+                    <span>
+                        <b>Telepon:</b>
+                        ${esc(p.telepon || '-')}
+                    </span>
+                </div>
+
+                <div style="
+                    border-top:1px solid #e2e8f0;
+                    margin:12px 0;
+                    padding-top:12px;
+                    font-size:12px;
+                    font-weight:700;
+                    color:#2563eb;
+                ">
+                    Profil Sekolah
+                </div>
+
+                <div class="popup-row">
+                    <i class="bi bi-person-badge"></i>
+                    <span>
+                        <b>Kepala Sekolah:</b>
+                        ${esc(p.kepala_sekolah || '-')}
+                    </span>
+                </div>
+
+                <div class="popup-row">
+                    <i class="bi bi-award"></i>
+                    <span>
+                        <b>Akreditasi:</b>
+                        ${esc(p.akreditasi || '-')}
+                    </span>
+                </div>
+
+                <div class="popup-row">
+                    <i class="bi bi-people"></i>
+                    <span>
+                        <b>Jumlah Siswa:</b>
+                        ${p.jumlah_siswa == null
+                            ? '-'
+                            : Number(p.jumlah_siswa).toLocaleString('id-ID')}
+                    </span>
+                </div>
+
+                <div class="popup-row">
+                    <i class="bi bi-person-workspace"></i>
+                    <span>
+                        <b>Jumlah Guru:</b>
+                        ${p.jumlah_guru == null
+                            ? '-'
+                            : Number(p.jumlah_guru).toLocaleString('id-ID')}
+                    </span>
+                </div>
+
+                <!-- Koordinat -->
+                <div style="
+                    border-top:1px solid #e2e8f0;
+                    padding-top:12px;
+                    margin-top:12px;
+                ">
+                    <div style="
+                        font-size:11px;
+                        color:#64748b;
+                        margin-bottom:8px;
+                    ">
+                        <i class="bi bi-crosshair"></i>
+                        ${lat.toFixed(6)}, ${lng.toFixed(6)}
+                    </div>
+
+                    <a
+                        href="https://www.google.com/maps/search/?api=1&query=${lat},${lng}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style="
+                            display:flex;
+                            align-items:center;
+                            justify-content:center;
+                            gap:8px;
+                            background:#2563eb;
+                            color:white;
+                            padding:10px;
+                            border-radius:8px;
+                            text-decoration:none;
+                            font-size:12px;
+                            font-weight:600;
+                        "
+                    >
+                        <i class="bi bi-box-arrow-up-right"></i>
+                        Lihat di Google Maps
+                    </a>
+                </div>
+
+            </div>
+        `;
+
+        // Hubungkan popup dengan marker
+        layer.bindPopup(popup, {
+            maxWidth: 340,
+            minWidth: 270,
+            autoPan: true,
+            keepInView: true
+        });
+    }
+});
+
 
         async function muatData() {
             if (requestController) requestController.abort();

@@ -60,39 +60,51 @@ class SekolahController extends Controller
         return view('admin.sekolah.edit', compact('sekolah'));
     }
 
+
     public function update(Request $request, Sekolah $sekolah)
     {
         Gate::authorize('update', $sekolah);
 
-        $rules = [
-            'nama'      => ['required', 'string', 'max:255'],
-            'jenjang'   => ['required', Rule::in(['SD', 'SMP', 'SMA', 'SMK'])],
-            'status'    => ['required', Rule::in(['Negeri', 'Swasta'])],
-            'alamat'    => ['required', 'string'],
-            'kecamatan' => ['required', 'string', 'max:100'],
-            'telepon'   => ['nullable', 'string', 'max:20'],
-            'latitude'  => ['required', 'numeric', 'between:-90,90'],
+        $data = $request->validate([
+            'nama' => ['required', 'string', 'max:255'],
+            'npsn' => ['required', 'string', 'max:20'],
+            'jenjang' => ['required', 'string'],
+            'status' => ['required', 'string'],
+            'alamat' => ['nullable', 'string'],
+            'kecamatan' => ['nullable', 'string'],
+            'telepon' => ['nullable', 'string', 'max:30'],
+            'latitude' => ['required', 'numeric', 'between:-90,90'],
             'longitude' => ['required', 'numeric', 'between:-180,180'],
-        ];
-
-        if (! $request->user()->isSekolah()) {
-            $rules['npsn'] = [
-                'required',
-                'digits:8',
-                Rule::unique('sekolahs', 'npsn')->ignore($sekolah->id),
-            ];
-        }
-
-        $data = $request->validate($rules);
+        ]);
 
         if ($request->user()->isSekolah()) {
-            unset($data['npsn']);
+            if ($sekolah->latitude === null || $sekolah->longitude === null) {
+                return back()->withErrors([
+                    'latitude' => 'Koordinat awal belum tersedia. Hubungi Admin untuk menetapkan lokasi sekolah.',
+                ])->withInput();
+            }
+
+            $jarak = $this->hitungJarak(
+                (float) $sekolah->latitude,
+                (float) $sekolah->longitude,
+                (float) $data['latitude'],
+                (float) $data['longitude']
+            );
+
+            if ($jarak > 100) {
+                return back()->withErrors([
+                    'latitude' => 'Perubahan lokasi ditolak. Jarak perpindahan '
+                        . round($jarak, 2)
+                        . ' meter, melebihi batas maksimal 100 meter.',
+                ])->withInput();
+            }
         }
 
         $sekolah->update($data);
 
-        return back()->with('success', 'Data sekolah berhasil diperbarui.');
+        return redirect()->back()->with('success', 'Data sekolah berhasil diperbarui.');
     }
+
 
     public function destroy(Sekolah $sekolah)
     {
@@ -100,5 +112,17 @@ class SekolahController extends Controller
 
         return redirect()->route('dinas.sekolah.index')
             ->with('success', 'Data sekolah berhasil dihapus.');
+    }
+
+    private function hitungJarak(float $lat1, float $lon1, float $lat2, float $lon2): float
+    {
+        $radiusBumi = 6371000;
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+        $a = sin($dLat / 2) ** 2
+            + cos(deg2rad($lat1)) * cos(deg2rad($lat2))
+            * sin($dLon / 2) ** 2;
+        $c = 2 * atan2(sqrt($a), sqrt(max(0, 1 - $a)));
+        return $radiusBumi * $c;
     }
 }

@@ -33,6 +33,7 @@
                     @endif
                     @if (auth()->user()->isAdmin())
                         <a href="{{ route('admin.users.index') }}" class="rounded-lg px-4 py-3 text-sm font-medium hover:bg-blue-50">Pengguna</a>
+                        <a href="{{ route('admin.log-aktivitas.index') }}" class="rounded-lg px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-blue-50 hover:text-blue-700">Log Aktivitas</a>
                     @endif
                     @if(auth()->user()->isDinas() && Route::has('dinas.sekolah.index'))
                         <a href="{{ route('dinas.sekolah.index') }}" @class(['rounded-lg px-4 py-2.5 text-sm font-medium transition', 'bg-blue-50 text-blue-700' => request()->routeIs('dinas.sekolah.*'), 'text-slate-600 hover:bg-slate-100' => !request()->routeIs('dinas.sekolah.*')])>Data Sekolah</a>
@@ -40,6 +41,7 @@
                     @if(auth()->user()->isSekolah() && auth()->user()->sekolah_id && Route::has('sekolah.edit'))
                         <a href="{{ route('sekolah.edit', auth()->user()->sekolah_id) }}" @class(['rounded-lg px-4 py-2.5 text-sm font-medium transition', 'bg-blue-50 text-blue-700' => request()->routeIs('sekolah.edit'), 'text-slate-600 hover:bg-slate-100' => !request()->routeIs('sekolah.edit')])>Sekolah Saya</a>
                     @endif
+                    <a href="{{ route('password.edit') }}" class="rounded-lg px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-blue-50 hover:text-blue-700">Ubah Kata Sandi</a>
                 @endauth
             </nav>
             <div class="ml-auto flex items-center gap-3">
@@ -87,6 +89,7 @@
                     <div class="mt-2 border-t border-slate-100 px-4 pt-3 text-sm text-slate-500">
                         {{ auth()->user()->name }} — {{ auth()->user()->roleLabel() }}
                     </div>
+                    <a href="{{ route('password.edit') }}" class="rounded-lg px-4 py-3 text-sm font-medium hover:bg-blue-50">Ubah Kata Sandi</a>
                 @endauth
             </div>
         </nav>
