@@ -1,24 +1,26 @@
 @extends('layouts.app')
 @section('title', 'Dashboard')
 @section('content')
-<h1 class="text-2xl font-bold">Selamat datang, {{ $user->name }}</h1>
-<p class="text-gray-600 mb-6">Masuk sebagai {{ $user->roleLabel() }}</p>
+<div class="dashboard-heading">
+    <h1>Selamat datang, {{ $user->name }}</h1>
+    <p>Ruang kerja {{ $user->roleLabel() }} untuk pengelolaan informasi pendidikan.</p>
+</div>
 @if ($user->isAdmin())
-    <div class="grid md:grid-cols-3 gap-4">
+    <div class="grid gap-4 md:grid-cols-3">
         @foreach ($jumlahPerRole as $label => $jumlah)
-            <div class="bg-white rounded shadow p-5">
+            <div class="dashboard-card">
                 <p class="text-3xl font-bold text-blue-800">{{ $jumlah }}</p>
                 <p class="text-gray-600">Akun {{ $label }}</p>
             </div>
         @endforeach
     </div>
 @elseif ($user->isDinas())
-    <div class="bg-white rounded shadow p-5 w-64">
+    <div class="dashboard-card w-full sm:max-w-xs">
         <p class="text-3xl font-bold text-blue-800">{{ $jumlahSekolah }}</p>
         <p class="text-gray-600">Sekolah terdata</p>
     </div>
 @elseif ($sekolah)
-    <div class="bg-white rounded shadow p-5 max-w-lg">
+    <div class="dashboard-profile-card">
         <p class="text-xl font-bold">{{ $sekolah->nama }}</p>
         <p class="text-gray-600">NPSN {{ $sekolah->npsn }} - {{ $sekolah->jenjang }} {{ $sekolah->status }}</p>
         <p class="mt-4">Kelengkapan profil:
@@ -29,8 +31,8 @@
         </div>
     </div>
 @else
-    <div class="p-4 rounded bg-yellow-100 text-yellow-800">
-    Akun Anda belum ditautkan ke sekolah. Hubungi admin.
+    <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-900">
+        Akun Anda belum ditautkan ke sekolah. Hubungi admin.
     </div>
 @endif
 @endsection

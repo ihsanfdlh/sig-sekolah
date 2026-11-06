@@ -11,6 +11,8 @@
         ? \Illuminate\Support\Facades\Storage::disk('public')->url($profil->logo)
         : null;
 
+    $tutWuri = asset('storage/assets/tut-wuri-handayani.png');
+
     $informasi = [
         'NPSN' => $sekolah->npsn,
         'Jenjang' => $sekolah->jenjang,
@@ -21,175 +23,399 @@
         'Akreditasi' => $profil?->akreditasi,
         'Tahun Berdiri' => $profil?->tahun_berdiri,
     ];
+
+    $websiteValid = $profil?->website
+        && filter_var($profil->website, FILTER_VALIDATE_URL)
+        && in_array(
+            parse_url($profil->website, PHP_URL_SCHEME),
+            ['http', 'https'],
+            true
+        );
+
+    $punyaKoordinat = is_numeric($sekolah->latitude)
+        && is_numeric($sekolah->longitude)
+        && $sekolah->latitude >= -90
+        && $sekolah->latitude <= 90
+        && $sekolah->longitude >= -180
+        && $sekolah->longitude <= 180;
 @endphp
 
-<div class="mx-auto max-w-6xl space-y-6 pb-10">
+<div class="mx-auto w-full max-w-6xl space-y-6 pb-12">
 
     {{-- Navigasi --}}
-    <div class="flex items-center justify-between gap-4">
+    <div class="flex flex-wrap items-center justify-between gap-3">
         <a href="{{ route('peta.index') }}"
-           class="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:underline">
-            ← Kembali ke Peta
+            class="inline-flex items-center gap-2 text-sm font-medium text-slate-600 transition hover:text-blue-700">
+            <span aria-hidden="true">&larr;</span>
+            Kembali ke Peta
         </a>
 
-        <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+        <span class="rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700">
             Profil Publik Sekolah
         </span>
     </div>
 
-    {{-- Header sekolah --}}
+    {{-- Header Sekolah --}}
     <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
 
-        <div class="h-28 bg-gradient-to-r from-blue-700 via-blue-600 to-cyan-500 sm:h-40"></div>
+        {{-- Banner --}}
+        <div class="relative h-36 overflow-hidden bg-gradient-to-r from-blue-800 via-blue-700 to-cyan-600 sm:h-44">
 
-        <div class="px-5 pb-6 sm:px-8">
-            <div class="-mt-12 flex flex-col gap-4 sm:-mt-14 sm:flex-row sm:items-end">
+            {{-- Ornamen --}}
+            <div class="pointer-events-none absolute -right-20 -top-28 h-72 w-72 rounded-full border border-white/10"></div>
+            <div class="pointer-events-none absolute -bottom-24 right-28 h-48 w-48 rounded-full bg-white/5"></div>
 
-                <div class="flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-4 border-white bg-white shadow-md sm:h-32 sm:w-32">
-                    @if ($logo)
-                        <img src="{{ $logo }}"
-                             alt="Logo {{ $sekolah->nama }}"
-                             class="h-full w-full object-contain p-2">
-                    @else
-                        <span class="text-5xl">🏫</span>
+            {{-- Watermark Tut Wuri Handayani --}}
+            <div class="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 sm:right-12">
+                <img
+                    src="{{ $tutWuri }}"
+                    alt=""
+                    aria-hidden="true"
+                    class="h-32 w-32 object-contain opacity-20 grayscale brightness-0 invert sm:h-44 sm:w-44"
+                >
+            </div>
+
+            {{-- Tulisan Banner --}}
+            <div class="absolute left-6 top-6 right-40 sm:left-8 sm:top-8 sm:right-56">
+                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-100">
+                    Sistem Informasi Geografis
+                </p>
+
+                <p class="mt-2 text-sm text-white/80">
+                    Profil Satuan Pendidikan
+                </p>
+            </div>
+        </div>
+
+        {{-- Identitas Sekolah --}}
+        <div class="relative px-5 pb-7 sm:px-8">
+
+            {{-- Logo Sekolah --}}
+            <div class="relative z-10 -mt-12 mb-5 flex h-24 w-24 items-center justify-center overflow-hidden rounded-2xl border-4 border-white bg-white shadow-md sm:h-28 sm:w-28">
+
+                @if ($logo)
+                    <img
+                        src="{{ $logo }}"
+                        alt="Logo {{ $sekolah->nama }}"
+                        class="h-full w-full object-contain p-2"
+                    >
+                @else
+                    <div class="flex h-full w-full items-center justify-center bg-blue-50 text-3xl font-bold text-blue-700">
+                        {{ strtoupper(substr($sekolah->jenjang ?: 'S', 0, 1)) }}
+                    </div>
+                @endif
+
+            </div>
+
+            {{-- Nama Sekolah --}}
+            <div class="relative z-10">
+
+                <h1 class="break-words text-2xl font-bold leading-tight tracking-tight text-slate-900 sm:text-3xl">
+                    {{ $sekolah->nama }}
+                </h1>
+
+                <p class="mt-2 text-sm text-slate-500">
+                    NPSN {{ $sekolah->npsn }}
+                    <span class="mx-2 text-slate-300">|</span>
+                    {{ $sekolah->kecamatan ?: 'Kecamatan belum tersedia' }}
+                </p>
+
+                {{-- Jenjang, Status, Akreditasi --}}
+                <div class="mt-4 flex flex-wrap gap-2">
+
+                    <span class="rounded-md bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                        {{ $sekolah->jenjang }}
+                    </span>
+
+                    <span class="rounded-md bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                        {{ $sekolah->status }}
+                    </span>
+
+                    @if ($profil?->akreditasi)
+                        <span class="rounded-md bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+                            Akreditasi {{ $profil->akreditasi }}
+                        </span>
                     @endif
-                </div>
 
-                <div class="min-w-0 flex-1 pb-1">
-                    <h1 class="text-2xl font-bold text-slate-900 sm:text-3xl">
-                        {{ $sekolah->nama }}
-                    </h1>
-
-                    <p class="mt-2 text-sm text-slate-500">
-                        NPSN {{ $sekolah->npsn }}
-                        • {{ $sekolah->jenjang }}
-                        • {{ $sekolah->status }}
-                    </p>
                 </div>
             </div>
         </div>
     </section>
 
-    {{-- Statistik --}}
+    {{-- Statistik Sekolah --}}
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
 
+        {{-- Jumlah Siswa --}}
         <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <p class="text-sm text-slate-500">Jumlah Siswa</p>
-            <p class="mt-2 text-3xl font-bold text-blue-700">
+            <p class="text-sm font-medium text-slate-500">
+                Jumlah Siswa
+            </p>
+
+            <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
                 {{ $profil?->jumlah_siswa !== null
                     ? number_format($profil->jumlah_siswa, 0, ',', '.')
                     : '-' }}
             </p>
+
+            <p class="mt-1 text-xs text-slate-400">
+                Peserta didik
+            </p>
         </div>
 
+        {{-- Jumlah Guru --}}
         <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <p class="text-sm text-slate-500">Jumlah Guru</p>
-            <p class="mt-2 text-3xl font-bold text-blue-700">
+            <p class="text-sm font-medium text-slate-500">
+                Jumlah Guru
+            </p>
+
+            <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
                 {{ $profil?->jumlah_guru !== null
                     ? number_format($profil->jumlah_guru, 0, ',', '.')
                     : '-' }}
             </p>
+
+            <p class="mt-1 text-xs text-slate-400">
+                Tenaga pengajar
+            </p>
         </div>
 
+        {{-- Akreditasi --}}
         <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <p class="text-sm text-slate-500">Akreditasi</p>
-            <p class="mt-2 text-3xl font-bold text-blue-700">
+            <p class="text-sm font-medium text-slate-500">
+                Akreditasi
+            </p>
+
+            <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
                 {{ $profil?->akreditasi ?: '-' }}
+            </p>
+
+            <p class="mt-1 text-xs text-slate-400">
+                Status akreditasi sekolah
             </p>
         </div>
 
     </div>
 
-    {{-- Informasi sekolah --}}
-    <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+    {{-- Informasi Sekolah --}}
+    <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
 
-        <h2 class="mb-5 text-xl font-bold text-slate-900">
-            Informasi Sekolah
-        </h2>
+        <div class="border-b border-slate-100 px-5 py-5 sm:px-7">
+            <h2 class="text-lg font-bold text-slate-900">
+                Informasi Sekolah
+            </h2>
 
-        <dl class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <p class="mt-1 text-sm text-slate-500">
+                Identitas dan informasi umum satuan pendidikan.
+            </p>
+        </div>
+
+        <dl class="grid grid-cols-1 gap-x-10 px-5 py-2 sm:grid-cols-2 sm:px-7">
+
             @foreach ($informasi as $label => $nilai)
-                <div class="border-b border-slate-100 pb-3">
+                <div class="min-w-0 border-b border-slate-100 py-4">
+
                     <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">
                         {{ $label }}
                     </dt>
-                    <dd class="mt-1 break-words text-sm font-medium text-slate-800">
+
+                    <dd class="mt-1.5 break-words text-sm font-medium leading-6 text-slate-800">
                         {{ $nilai !== null && $nilai !== '' ? $nilai : 'Belum tersedia' }}
                     </dd>
+
                 </div>
             @endforeach
+
         </dl>
 
     </section>
 
-    {{-- Deskripsi --}}
-    <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+    {{-- Tentang Sekolah --}}
+    <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
 
-        <h2 class="mb-4 text-xl font-bold text-slate-900">
-            Tentang Sekolah
-        </h2>
+        <div class="border-b border-slate-100 px-5 py-5 sm:px-7">
+            <h2 class="text-lg font-bold text-slate-900">
+                Tentang Sekolah
+            </h2>
 
-        <p class="whitespace-pre-line text-sm leading-7 text-slate-600">
-            {{ $profil?->deskripsi ?: 'Deskripsi sekolah belum tersedia.' }}
-        </p>
+            <p class="mt-1 text-sm text-slate-500">
+                Gambaran umum dan informasi tambahan mengenai sekolah.
+            </p>
+        </div>
+
+        <div class="px-5 py-6 sm:px-7">
+            <p class="whitespace-pre-line break-words text-sm leading-8 text-slate-600">
+                {{ $profil?->deskripsi ?: 'Deskripsi sekolah belum tersedia.' }}
+            </p>
+        </div>
 
     </section>
 
-    {{-- Kontak --}}
-    <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+    {{-- Kontak dan Lokasi --}}
+    <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
 
-        <h2 class="mb-5 text-xl font-bold text-slate-900">
-            Kontak dan Lokasi
-        </h2>
+        <div class="border-b border-slate-100 px-5 py-5 sm:px-7">
+            <h2 class="text-lg font-bold text-slate-900">
+                Kontak dan Lokasi
+            </h2>
 
-        <div class="space-y-4 text-sm">
+            <p class="mt-1 text-sm text-slate-500">
+                Informasi kontak resmi dan lokasi sekolah.
+            </p>
+        </div>
 
+        <div class="grid grid-cols-1 gap-8 p-5 sm:p-7 lg:grid-cols-2">
+
+            {{-- Informasi Kontak --}}
             <div>
-                <p class="text-slate-500">Email</p>
-                @if ($profil?->email)
-                    <a href="mailto:{{ $profil->email }}"
-                       class="font-medium text-blue-600 hover:underline">
-                        {{ $profil->email }}
-                    </a>
-                @else
-                    <p class="text-slate-700">Belum tersedia</p>
-                @endif
+                <h3 class="mb-5 text-sm font-bold text-slate-900">
+                    Informasi Kontak
+                </h3>
+
+                <dl class="space-y-5">
+
+                    {{-- Email --}}
+                    <div class="border-b border-slate-100 pb-4">
+
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                            Email
+                        </dt>
+
+                        <dd class="mt-2">
+                            @if ($profil?->email)
+                                <a href="mailto:{{ $profil->email }}"
+                                    class="break-all text-sm font-medium text-blue-700 hover:underline">
+                                    {{ $profil->email }}
+                                </a>
+                            @else
+                                <span class="text-sm text-slate-700">
+                                    Belum tersedia
+                                </span>
+                            @endif
+                        </dd>
+
+                    </div>
+
+                    {{-- Website --}}
+                    <div class="border-b border-slate-100 pb-4">
+
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                            Website
+                        </dt>
+
+                        <dd class="mt-2">
+                            @if ($websiteValid)
+                                <a href="{{ $profil->website }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="break-all text-sm font-medium text-blue-700 hover:underline">
+                                    {{ $profil->website }}
+                                </a>
+                            @else
+                                <span class="text-sm text-slate-700">
+                                    Belum tersedia
+                                </span>
+                            @endif
+                        </dd>
+
+                    </div>
+
+                    {{-- Telepon --}}
+                    <div>
+
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                            Telepon
+                        </dt>
+
+                        <dd class="mt-2 text-sm font-medium text-slate-800">
+                            {{ $sekolah->telepon ?: 'Belum tersedia' }}
+                        </dd>
+
+                    </div>
+
+                </dl>
             </div>
 
+            {{-- Lokasi Sekolah --}}
             <div>
-                <p class="text-slate-500">Website</p>
-                @if ($profil?->website && filter_var($profil->website, FILTER_VALIDATE_URL)
-                    && in_array(parse_url($profil->website, PHP_URL_SCHEME), ['http', 'https'], true))
-                    <a href="{{ $profil->website }}"
-                       target="_blank"
-                       rel="noopener noreferrer"
-                       class="break-all font-medium text-blue-600 hover:underline">
-                        {{ $profil->website }}
-                    </a>
-                @else
-                    <p class="text-slate-700">Belum tersedia</p>
-                @endif
-            </div>
 
-            <div>
-                <p class="text-slate-500">Alamat</p>
-                <p class="font-medium text-slate-800">
-                    {{ $sekolah->alamat ?: 'Belum tersedia' }}
-                </p>
-            </div>
+                <h3 class="mb-5 text-sm font-bold text-slate-900">
+                    Lokasi Sekolah
+                </h3>
 
-            @if (is_numeric($sekolah->latitude) && is_numeric($sekolah->longitude))
-                <a
-                    href="https://www.google.com/maps/search/?api=1&query={{ urlencode($sekolah->latitude . ',' . $sekolah->longitude) }}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="inline-flex rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700">
-                    Lihat Lokasi di Google Maps
-                </a>
-            @endif
+                <div class="rounded-xl border border-slate-200 bg-slate-50 p-5">
+
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        Alamat Lengkap
+                    </p>
+
+                    <p class="mt-2 text-sm font-medium leading-7 text-slate-800">
+                        {{ $sekolah->alamat ?: 'Alamat belum tersedia' }}
+                    </p>
+
+                    @if ($punyaKoordinat)
+
+                        {{-- Koordinat --}}
+                        <div class="mt-5 grid grid-cols-2 gap-3">
+
+                            <div class="rounded-lg border border-slate-200 bg-white p-3">
+                                <p class="text-xs text-slate-500">
+                                    Latitude
+                                </p>
+
+                                <p class="mt-1 break-all text-xs font-semibold text-slate-800 sm:text-sm">
+                                    {{ $sekolah->latitude }}
+                                </p>
+                            </div>
+
+                            <div class="rounded-lg border border-slate-200 bg-white p-3">
+                                <p class="text-xs text-slate-500">
+                                    Longitude
+                                </p>
+
+                                <p class="mt-1 break-all text-xs font-semibold text-slate-800 sm:text-sm">
+                                    {{ $sekolah->longitude }}
+                                </p>
+                            </div>
+
+                        </div>
+
+                        {{-- Tombol Google Maps --}}
+                        <a
+                            href="https://www.google.com/maps/search/?api=1&query={{ urlencode($sekolah->latitude . ',' . $sekolah->longitude) }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="mt-5 inline-flex w-full items-center justify-center rounded-lg bg-blue-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-800">
+                            Lihat Lokasi di Google Maps
+                        </a>
+
+                    @else
+
+                        <p class="mt-4 text-xs text-slate-500">
+                            Koordinat lokasi belum tersedia.
+                        </p>
+
+                    @endif
+
+                </div>
+            </div>
 
         </div>
+
     </section>
+
+    {{-- Footer --}}
+    <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-5">
+
+        <p class="text-xs text-slate-500">
+            Informasi profil dikelola oleh pihak sekolah.
+        </p>
+
+        <a href="{{ route('peta.index') }}"
+            class="text-sm font-semibold text-blue-700 transition hover:underline">
+            Kembali ke Peta
+        </a>
+
+    </div>
 
 </div>
 @endsection

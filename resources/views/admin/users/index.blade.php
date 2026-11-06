@@ -45,35 +45,33 @@
                             @endif
                         </td>
                         <td class="px-4 py-3">
-                            @if (auth()->user()->isAdmin() && auth()->id() !== $u->id)
-                                <form method="POST" action="{{ route('admin.users.toggle-status', $u) }}"
-                                    onsubmit="return confirm('Yakin ingin mengubah status akun ini?')">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit"
-                                        class="rounded-lg px-4 py-2 text-sm font-semibold text-white {{ $u->is_active ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700' }}">
-                                        {{ $u->is_active ? 'Nonaktifkan' : 'Aktifkan' }}
-                                    </button>
-                                </form>
-                            @else
-                                <span class="text-sm text-slate-400">—</span>
-                            @endif
-                        </td>
-                        <td class="p-3 flex gap-3">
-                            <a href="{{ route('admin.users.edit', $u) }}" class="text-blue-700">Ubah</a>
-                            @if (!$u->is(auth()->user()))
-                                <form method="POST" action="{{ route('admin.users.destroy', $u) }}"
-                                    onsubmit="return confirm('Hapus pengguna ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="text-red-600">Hapus</button>
-                                </form>
-                            @endif
+                            <div class="flex flex-wrap items-center gap-3">
+                                @if (auth()->user()->isAdmin() && auth()->id() !== $u->id)
+                                    <form method="POST" action="{{ route('admin.users.toggle-status', $u) }}"
+                                        onsubmit="return confirm('Yakin ingin mengubah status akun ini?')">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit"
+                                            class="rounded-lg px-3 py-2 text-xs font-semibold text-white {{ $u->is_active ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700' }}">
+                                            {{ $u->is_active ? 'Nonaktifkan' : 'Aktifkan' }}
+                                        </button>
+                                    </form>
+                                @endif
+                                <a href="{{ route('admin.users.edit', $u) }}" class="text-blue-700">Ubah</a>
+                                @if (!$u->is(auth()->user()))
+                                    <form method="POST" action="{{ route('admin.users.destroy', $u) }}"
+                                        onsubmit="return confirm('Hapus pengguna ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="text-red-600">Hapus</button>
+                                    </form>
+                                @endif
+                            </div>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="p-4 text-center">Belum ada pengguna.</td>
+                        <td colspan="6" class="p-4 text-center">Belum ada pengguna.</td>
                     </tr>
                 @endforelse
             </tbody>

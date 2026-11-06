@@ -6,25 +6,166 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --color-blue-50: #edf6f1;
+    --color-blue-100: #d6ebde;
+    --color-blue-200: #b4dac4;
+    --color-blue-300: #89c3a2;
+    --color-blue-400: #5ea982;
+    --color-blue-500: #368b68;
+    --color-blue-600: #247555;
+    --color-blue-700: #1a6048;
+    --color-blue-800: #174d3c;
+    --color-blue-900: #123e32;
+}
+
+.app-page.bg-slate-50 {
+    background:
+        radial-gradient(ellipse at 10% 0%, rgba(180, 218, 196, .36), transparent 34%),
+        radial-gradient(ellipse at 100% 20%, rgba(199, 210, 254, .32), transparent 38%),
+        linear-gradient(145deg, #f3f7f5, #eef2f8 58%, #f7f8f6);
 }
 
 :root {
-    --primary: #2563eb;
-    --primary-dark: #1d4ed8;
-    --background: #f8fafc;
-    --surface: #ffffff;
-    --text: #0f172a;
-    --muted: #64748b;
-    --border: #e2e8f0;
-    --shadow: 0 4px 20px rgba(15, 23, 42, .08);
+    --primary: #247555;
+    --primary-dark: #1a6048;
+    --accent: #c59a47;
+    --background: #f1f5f4;
+    --surface: rgba(255, 255, 255, .68);
+    --text: #192a22;
+    --muted: #68786f;
+    --border: rgba(255, 255, 255, .78);
+    --shadow: 0 14px 36px rgba(31, 57, 74, .09);
 }
 
 .app-page {
     min-height: 100vh;
     margin: 0;
-    background: var(--background);
+    background:
+        radial-gradient(ellipse at 10% 0%, rgba(180, 218, 196, .36), transparent 34%),
+        radial-gradient(ellipse at 100% 20%, rgba(199, 210, 254, .32), transparent 38%),
+        linear-gradient(145deg, #f3f7f5, #eef2f8 58%, #f7f8f6);
     color: var(--text);
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.academic-navbar {
+    border-color: var(--border);
+    background: rgb(255 255 255 / 96%);
+    box-shadow: 0 4px 18px rgba(28, 57, 42, .06);
+}
+
+.academic-brand-mark {
+    background: linear-gradient(145deg, #247555, #174d3c);
+    box-shadow: 0 5px 12px rgba(36, 117, 85, .2);
+}
+
+.academic-nav a {
+    transition: background .2s, color .2s, transform .2s;
+}
+
+.academic-nav a:hover {
+    color: var(--primary-dark);
+}
+
+.app-page input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.app-page select,
+.app-page textarea {
+    border-color: rgba(203, 213, 225, .72);
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, .76);
+    color: var(--text);
+    backdrop-filter: blur(12px);
+}
+
+.app-page input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):focus,
+.app-page select:focus,
+.app-page textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(36, 117, 85, .12);
+    outline: none;
+}
+
+.app-page button,
+.app-page a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+.app-page :focus-visible {
+    outline: 3px solid rgba(197, 154, 71, .55);
+    outline-offset: 2px;
+}
+
+.dashboard-heading {
+    margin-bottom: 24px;
+}
+
+.dashboard-heading h1 {
+    margin: 0;
+    color: var(--text);
+    font-size: clamp(24px, 3vw, 32px);
+    font-weight: 750;
+    letter-spacing: -.03em;
+}
+
+.dashboard-heading p {
+    margin: 7px 0 0;
+    color: var(--muted);
+}
+
+.dashboard-card {
+    min-height: 132px;
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--accent);
+    border-radius: 14px;
+    background: var(--surface);
+    padding: 22px;
+    box-shadow: var(--shadow);
+}
+
+.dashboard-card p:first-child {
+    color: var(--primary-dark);
+}
+
+.dashboard-profile-card {
+    max-width: 640px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+    padding: 24px;
+    box-shadow: var(--shadow);
+}
+
+.auth-page {
+    display: grid;
+    min-height: 100vh;
+    place-items: center;
+    padding: 24px;
+    background:
+        radial-gradient(ellipse at 12% 10%, rgba(197, 154, 71, .15), transparent 34%),
+        radial-gradient(ellipse at 90% 15%, rgba(199, 210, 254, .36), transparent 38%),
+        linear-gradient(145deg, #edf4ee, #f8fafc 60%, #e8f0eb);
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 440px;
+    border: 1px solid rgba(255, 255, 255, .86);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, .7);
+    padding: clamp(24px, 6vw, 40px);
+    box-shadow: 0 22px 60px rgba(25, 55, 39, .14);
+    backdrop-filter: blur(22px);
+}
+
+.auth-brand-mark {
+    display: grid;
+    width: 52px;
+    height: 52px;
+    place-items: center;
+    border-radius: 15px;
+    background: linear-gradient(145deg, #247555, #174d3c);
+    color: white;
+    box-shadow: 0 7px 16px rgba(36, 117, 85, .2);
 }
 
 .app-navbar {
@@ -193,7 +334,7 @@
     border: 1px solid var(--border);
     border-radius: 9px;
     outline: none;
-    background: white;
+    background: rgba(255, 255, 255, .76);
     color: var(--text);
     font: inherit;
     font-size: 13px;
@@ -202,7 +343,7 @@
 
 .form-control:focus {
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, .1);
+    box-shadow: 0 0 0 3px rgba(36, 117, 85, .14);
 }
 
 .search-form .form-control {
@@ -219,6 +360,13 @@
     box-shadow: var(--shadow);
 }
 
+.table-card,
+.form-card {
+    border-color: var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+}
+
 .table-scroll {
     overflow-x: auto;
 }
@@ -232,7 +380,7 @@
 
 .school-table th {
     padding: 13px 15px;
-    background: #f1f5f9;
+    background: rgba(238, 242, 248, .72);
     color: #475569;
     font-size: 11px;
     font-weight: 700;
@@ -243,13 +391,13 @@
 
 .school-table td {
     padding: 14px 15px;
-    border-top: 1px solid #f1f5f9;
+    border-top: 1px solid rgba(203, 213, 225, .48);
     color: #334155;
     vertical-align: middle;
 }
 
 .school-table tbody tr:hover {
-    background: #f8fafc;
+    background: rgba(237, 246, 241, .48);
 }
 
 .school-table .coordinates {
@@ -333,7 +481,7 @@
     padding: 0 10px;
     border: 1px solid var(--border);
     border-radius: 8px;
-    background: white;
+    background: rgba(255, 255, 255, .72);
     color: #475569;
     font-size: 13px;
     text-decoration: none;
@@ -439,6 +587,8 @@
     max-width: 760px;
     margin: 5vh auto 0;
     padding: clamp(28px, 6vw, 56px);
+    border-top: 4px solid var(--accent);
+    border-radius: 18px;
 }
 
 .welcome-card .welcome-eyebrow {
@@ -446,7 +596,7 @@
     margin-bottom: 15px;
     padding: 6px 10px;
     border-radius: 7px;
-    background: #eff6ff;
+    background: #f8f2e5;
     color: var(--primary);
     font-size: 11px;
     font-weight: 700;
@@ -454,11 +604,126 @@
     text-transform: uppercase;
 }
 
+.welcome-card h1 {
+    max-width: 620px;
+    font-size: clamp(32px, 5vw, 48px);
+    line-height: 1.12;
+}
+
+.welcome-card p {
+    max-width: 590px;
+    font-size: 15px;
+}
+
 .welcome-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
     margin-top: 24px;
+}
+
+.auth-card .form-control {
+    min-height: 46px;
+}
+
+.auth-card label {
+    color: #33483b;
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.auth-card input[type="checkbox"] {
+    accent-color: var(--primary);
+}
+
+.auth-card a {
+    text-decoration: none;
+}
+
+.auth-card a:hover {
+    text-decoration: underline;
+}
+
+.app-page .bg-white {
+    background-color: rgba(255, 255, 255, .68);
+    backdrop-filter: blur(18px);
+}
+
+.app-page .border-slate-100,
+.app-page .border-slate-200,
+.app-page .border-slate-300,
+.app-page .border-gray-200 {
+    border-color: rgba(203, 213, 225, .58);
+}
+
+.app-page .bg-slate-50,
+.app-page .bg-gray-50 {
+    background-color: rgba(241, 245, 249, .66);
+}
+
+.app-page .bg-gray-200,
+.app-page .bg-slate-100 {
+    background-color: rgba(226, 232, 240, .7);
+}
+
+.app-page .table-card,
+.app-page .form-card,
+.app-page .dashboard-card,
+.app-page .dashboard-profile-card,
+.app-page .welcome-card {
+    border-color: rgba(255, 255, 255, .84);
+    background-color: rgba(255, 255, 255, .68);
+    box-shadow: 0 14px 36px rgba(31, 57, 74, .09);
+    backdrop-filter: blur(18px);
+}
+
+.app-page main h1,
+.app-page main h2,
+.app-page main h3 {
+    letter-spacing: -.025em;
+}
+
+.app-page main :is(button, .button, [type="submit"]) {
+    transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease;
+}
+
+.app-page main :is(button, .button, [type="submit"]):hover {
+    box-shadow: 0 7px 18px rgba(31, 57, 74, .12);
+}
+
+.app-page main .overflow-x-auto table {
+    min-width: 720px;
+    border-collapse: collapse;
+}
+
+.app-page main .overflow-x-auto thead {
+    background-color: rgba(238, 242, 248, .74);
+}
+
+.app-page main .overflow-x-auto tbody tr {
+    border-color: rgba(203, 213, 225, .5);
+}
+
+.app-page main .overflow-x-auto tbody tr:hover {
+    background-color: rgba(237, 246, 241, .46);
+}
+
+.app-page .school-table th {
+    background-color: rgba(238, 242, 248, .74);
+}
+
+.app-page .pagination a {
+    border-color: rgba(203, 213, 225, .68);
+    background-color: rgba(255, 255, 255, .72);
+    backdrop-filter: blur(12px);
+}
+
+.app-page .pagination span[aria-current="page"] span {
+    background: linear-gradient(135deg, var(--primary), #312e81);
+}
+
+.app-page .auth-card .form-control {
+    background-color: rgba(255, 255, 255, .8);
 }
 
 @media (max-width: 760px) {
@@ -499,6 +764,14 @@
     .form-columns {
         grid-template-columns: 1fr;
         gap: 22px;
+    }
+
+    .search-form {
+        flex-wrap: wrap;
+    }
+
+    .search-form .button {
+        flex: 0 0 auto;
     }
 }
 
