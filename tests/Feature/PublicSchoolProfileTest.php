@@ -57,4 +57,16 @@ class PublicSchoolProfileTest extends TestCase
             ->assertDontSee('Pengguna')
             ->assertSee('Keluar');
     }
+
+    public function test_public_header_shows_tut_wuri_watermark_and_mobile_navigation(): void
+    {
+        $this->withoutVite();
+
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('SIG Sekolah')
+            ->assertSee('storage/Assets/tut-wuri-handayani.png')
+            ->assertSee('id="public-menu-button"', false)
+            ->assertSee('id="public-mobile-menu"', false);
+    }
 }
