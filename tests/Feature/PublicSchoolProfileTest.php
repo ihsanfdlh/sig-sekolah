@@ -48,7 +48,9 @@ class PublicSchoolProfileTest extends TestCase
             ->assertSee('Peta Sekolah')
             ->assertDontSee('aria-controls="mobile-menu"', false)
             ->assertSee('Peta.popup(f)', false)
-            ->assertSee('logoFallback:', false);
+            ->assertSee('logoFallback:', false)
+            ->assertSee('.school-popup', false)
+            ->assertSee('school-popup-link', false);
     }
 
     public function test_authenticated_map_keeps_its_existing_dashboard_and_logout_links(): void

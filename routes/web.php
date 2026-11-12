@@ -114,3 +114,7 @@ Route::middleware('auth')->group(function () {
         PasswordController::class, 'update',
     ])->name('password.update');
 });
+
+Route::get('/welcome', function () {
+    return view('welcome');
+});

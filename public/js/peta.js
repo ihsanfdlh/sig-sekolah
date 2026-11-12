@@ -50,7 +50,7 @@ const Peta = {
         const [lat, lng] = Peta.latlng(fitur);
         const logo = Peta.esc(p.logo || window.PETA_URL.logoFallback);
         const profil = p.url_profil
-            ? `<a href="${Peta.esc(p.url_profil)}" style="display:block;margin-top:12px;padding:10px 12px;border-radius:10px;background:linear-gradient(110deg,#247555,#312e81);color:#fff;font-size:12px;font-weight:650;text-align:center;text-decoration:none">Lihat profil sekolah</a>`
+            ? `<a class="school-popup-link" href="${Peta.esc(p.url_profil)}">Lihat profil sekolah</a>`
             : '';
         const formatAngka = (nilai) => {
             if (nilai === null || nilai === undefined || nilai === '') {
@@ -64,20 +64,24 @@ const Peta = {
         };
  
         return `
-            <div style="width:280px;max-width:100%;font-family:system-ui,sans-serif;color:#192a22">
-                <div style="display:flex;align-items:center;gap:12px;padding-bottom:12px;margin-bottom:12px;border-bottom:1px solid rgba(203,213,225,.65)">
+            <div class="school-popup">
+                <div class="school-popup-heading">
                     <img
                         src="${logo}"
                         alt="Logo ${Peta.esc(p.nama || 'Sekolah')}"
-                        style="width:68px;height:68px;flex:0 0 68px;object-fit:contain;padding:5px;border:1px solid rgba(203,213,225,.65);border-radius:14px;background:rgba(255,255,255,.82)"
+                        class="school-popup-logo"
+                        onerror="this.style.display='none';this.nextElementSibling.hidden=false"
                     >
-                    <div style="min-width:0">
-                        <strong style="display:block;margin-bottom:7px;font-size:14px;line-height:1.35;overflow-wrap:anywhere">${Peta.esc(p.nama || 'Tanpa Nama')}</strong>
-                        <span style="display:inline-block;padding:4px 8px;border-radius:999px;background:rgba(36,117,85,.1);color:#174d3c;font-size:11px;font-weight:650">${Peta.esc(p.jenjang || '-')}</span>
-                        <span style="display:inline-block;padding:4px 8px;border-radius:999px;background:rgba(49,46,129,.1);color:#312e81;font-size:11px;font-weight:650">${Peta.esc(p.status || '-')}</span>
+                    <div class="school-popup-logo-fallback" hidden aria-hidden="true">🏫</div>
+                    <div class="school-popup-title">
+                        <strong>${Peta.esc(p.nama || 'Tanpa Nama')}</strong>
+                        <div class="school-popup-badges">
+                            <span class="school-popup-badge">${Peta.esc(p.jenjang || '-')}</span>
+                            <span class="school-popup-badge school-popup-badge-status">${Peta.esc(p.status || '-')}</span>
+                        </div>
                     </div>
                 </div>
-                <div style="display:grid;gap:6px;font-size:12px;line-height:1.5">
+                <div class="school-popup-details">
                     <div><strong>NPSN:</strong> ${Peta.esc(p.npsn || '-')}</div>
                     <div><strong>Alamat:</strong> ${Peta.esc(p.alamat || '-')}</div>
                     <div><strong>Kecamatan:</strong> ${Peta.esc(p.kecamatan || '-')}</div>
@@ -85,7 +89,7 @@ const Peta = {
                     <div><strong>Kepala sekolah:</strong> ${Peta.esc(p.kepala_sekolah || '-')}</div>
                     <div><strong>Akreditasi:</strong> ${Peta.esc(p.akreditasi || '-')}</div>
                     <div><strong>Siswa:</strong> ${formatAngka(p.jumlah_siswa)} &nbsp; <strong>Guru:</strong> ${formatAngka(p.jumlah_guru)}</div>
-                    <small style="color:#64748b">Koordinat: ${lat}, ${lng}</small>
+                    <small>Koordinat: ${lat}, ${lng}</small>
                 </div>
                 ${profil}
             </div>
