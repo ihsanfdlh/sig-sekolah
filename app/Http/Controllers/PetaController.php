@@ -28,7 +28,6 @@ class PetaController extends Controller
         return view('peta.panas');
     }
 
-
     public function geojson(Request $request)
     {
         $validated = $request->validate([
@@ -36,40 +35,40 @@ class PetaController extends Controller
                 'nullable',
                 'required_with:north,west,east',
                 'numeric',
-                'between:-90,90'
+                'between:-90,90',
             ],
             'north' => [
                 'nullable',
                 'required_with:south,west,east',
                 'numeric',
-                'between:-90,90'
+                'between:-90,90',
             ],
-            'west'  => [
+            'west' => [
                 'nullable',
                 'required_with:south,north,east',
                 'numeric',
-                'between:-180,180'
+                'between:-180,180',
             ],
-            'east'  => [
+            'east' => [
                 'nullable',
                 'required_with:south,north,west',
                 'numeric',
-                'between:-180,180'
+                'between:-180,180',
             ],
             'jenjang' => ['nullable', 'string', 'max:20'],
             'status' => ['nullable', 'string', 'max:20'],
         ]);
 
-        $query = Sekolah::query()
+        $query = Sekolah::with('profil')
             ->whereNotNull('latitude')
             ->whereNotNull('longitude')
             ->when(
                 $request->filled('jenjang'),
-                fn($q) => $q->where('jenjang', $request->jenjang)
+                fn ($q) => $q->where('jenjang', $request->jenjang)
             )
             ->when(
                 $request->filled('status'),
-                fn($q) => $q->where('status', $request->status)
+                fn ($q) => $q->where('status', $request->status)
             );
 
         if (
@@ -85,7 +84,7 @@ class PetaController extends Controller
 
             if ($south > $north) {
                 return response()->json([
-                    'message' => 'Batas latitude tidak valid.'
+                    'message' => 'Batas latitude tidak valid.',
                 ], 422);
             }
 
@@ -111,17 +110,17 @@ class PetaController extends Controller
                 'alamat',
                 'kecamatan',
                 'latitude',
-                'longitude'
+                'longitude',
             ])
             ->get()
-            ->map(fn($s) => [
+            ->map(fn ($s) => [
                 'type' => 'Feature',
                 'geometry' => [
                     'type' => 'Point',
                     'coordinates' => [
                         (float) $s->longitude,
-                        (float) $s->latitude
-                    ]
+                        (float) $s->latitude,
+                    ],
                 ],
                 'properties' => [
                     'id' => $s->id,
@@ -130,18 +129,25 @@ class PetaController extends Controller
                     'jenjang' => $s->jenjang,
                     'status' => $s->status,
                     'alamat' => $s->alamat,
-                    'kecamatan' => $s->kecamatan
-                ]
+                    'kecamatan' => $s->kecamatan,
+                    'telepon' => $s->telepon,
+                    'kepala_sekolah' => $s->profil?->kepala_sekolah,
+                    'akreditasi' => $s->profil?->akreditasi,
+                    'jumlah_siswa' => $s->profil?->jumlah_siswa,
+                    'jumlah_guru' => $s->profil?->jumlah_guru,
+                    'logo' => $s->profil?->logo
+                        ? asset('storage/'.$s->profil->logo)
+                        : null,
+                    'url_profil' => route('sekolah.publik', $s),
+                ],
             ])
             ->values();
 
         return response()->json([
             'type' => 'FeatureCollection',
-            'features' => $features
+            'features' => $features,
         ]);
     }
-
-
 
     public function rute()
     {
@@ -161,13 +167,13 @@ class PetaController extends Controller
     public function geojsonWilayah(Request $request)
     {
         $features = Sekolah::with('profil')
-            ->when($request->jenjang, fn($q, $j) => $q->where('jenjang', $j))
-            ->when($request->status, fn($q, $s) => $q->where('status', $s))
+            ->when($request->jenjang, fn ($q, $j) => $q->where('jenjang', $j))
+            ->when($request->status, fn ($q, $s) => $q->where('status', $s))
             ->get()
             ->groupBy('kecamatan')
             ->map(function ($kelompok, $kecamatan) {
                 $titik = $kelompok
-                    ->map(fn($s) => [$s->longitude, $s->latitude])
+                    ->map(fn ($s) => [$s->longitude, $s->latitude])
                     ->all();
 
                 $hull = Geometri::convexHull($titik);
@@ -189,7 +195,7 @@ class PetaController extends Controller
                         'kecamatan' => $kecamatan,
                         'jumlah_sekolah' => $kelompok->count(),
                         'jumlah_siswa' => (int) $kelompok->sum(
-                            fn($s) => $s->profil?->jumlah_siswa ?? 0
+                            fn ($s) => $s->profil?->jumlah_siswa ?? 0
                         ),
                     ],
                 ];

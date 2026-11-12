@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title') - Peta Sekolah</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="shortcut icon" href="storage/Assets/tut-wuri-handayani.png" type="image/x-icon">
     <style>
         /* ==========================================================
            TEMA GLASSMORPHISM GELAP - PENDIDIKAN
@@ -588,6 +589,7 @@
         window.PETA_URL = {
             data: "{{ route('peta.data') }}",
             wilayah: "{{ route('peta.data.wilayah') }}",
+            logoFallback: "{{ asset('storage/Assets/tut-wuri-handayani.png') }}",
         };
     </script>
     <script src="{{ asset('js/peta.js') }}"></script>

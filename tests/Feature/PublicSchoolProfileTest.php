@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\ProfilSekolah;
 use App\Models\Sekolah;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -25,13 +26,18 @@ class PublicSchoolProfileTest extends TestCase
             'latitude' => -3.3,
             'longitude' => 114.59,
         ]);
+        ProfilSekolah::create([
+            'sekolah_id' => $sekolah->id,
+            'logo' => 'logo-sekolah/logo-uji.png',
+        ]);
 
         $geojsonResponse = $this->getJson(route('peta.data'));
         $profileUrl = route('sekolah.publik', $sekolah);
 
         $geojsonResponse
             ->assertOk()
-            ->assertJsonPath('features.0.properties.url_profil', $profileUrl);
+            ->assertJsonPath('features.0.properties.url_profil', $profileUrl)
+            ->assertJsonPath('features.0.properties.logo', asset('storage/logo-sekolah/logo-uji.png'));
 
         $this->get($profileUrl)
             ->assertOk()
@@ -39,9 +45,10 @@ class PublicSchoolProfileTest extends TestCase
 
         $this->get('/')
             ->assertOk()
-            ->assertSee('WebGIS Peta Sekolah')
+            ->assertSee('Peta Sekolah')
             ->assertDontSee('aria-controls="mobile-menu"', false)
-            ->assertSee('const urlProfil = p.url_profil', false);
+            ->assertSee('Peta.popup(f)', false)
+            ->assertSee('logoFallback:', false);
     }
 
     public function test_authenticated_map_keeps_its_existing_dashboard_and_logout_links(): void
