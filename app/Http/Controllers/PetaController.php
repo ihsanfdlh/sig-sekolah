@@ -61,6 +61,11 @@ class PetaController extends Controller
         ]);
     }
 
+    public function rute()
+    {
+        return view('peta.rute');
+    }
+
     public function wilayah()
     {
         return view('peta.wilayah');
