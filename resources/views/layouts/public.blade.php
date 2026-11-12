@@ -7,6 +7,32 @@
     <title>@yield('title') - Peta Sekolah</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <style>
+        /* ==========================================================
+           TEMA GLASSMORPHISM GELAP - PENDIDIKAN
+           Papan tulis hijau tua + biru tinta + emas (lambang kelulusan).
+           Semua warna diatur lewat variabel di bawah.
+           ========================================================== */
+        :root {
+            color-scheme: dark;
+
+            --ink: #eaf3ee;
+            --ink-soft: #a9c0b5;
+
+            --glass: rgba(255, 255, 255, .07);
+            --glass-strong: rgba(14, 30, 27, .72);
+            --glass-faint: rgba(255, 255, 255, .06);
+            --glass-edge: rgba(255, 255, 255, .16);
+            --glass-shadow: 0 14px 40px rgba(0, 0, 0, .45);
+            --glass-inset: inset 0 1px 0 rgba(255, 255, 255, .14);
+            --blur: 20px;
+
+            --gold: #f5c451;
+            --gold-deep: #e0a02f;
+            --gold-soft: #ffe3a0;
+            --chalk: #2fa981;
+            --ink-blue: #3b46c4;
+        }
+
         html,
         body {
             height: 100%;
@@ -17,23 +43,70 @@
         body {
             display: flex;
             flex-direction: column;
-            background:
-                radial-gradient(ellipse at 10% 0%, rgba(180, 218, 196, .36), transparent 34%),
-                radial-gradient(ellipse at 100% 20%, rgba(199, 210, 254, .32), transparent 38%),
-                linear-gradient(145deg, #f3f7f5, #eef2f8 58%, #f7f8f6);
-            color: #192a22;
+            background: linear-gradient(150deg, #07120f, #0a1626 55%, #0b0f1e);
+            color: var(--ink);
         }
 
+        /* Gumpalan cahaya: hijau papan tulis, biru tinta, dan sedikit emas */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: -10%;
+            z-index: -2;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 12% 16%, rgba(47, 169, 129, .42), transparent 34%),
+                radial-gradient(circle at 90% 10%, rgba(59, 70, 196, .5), transparent 36%),
+                radial-gradient(circle at 82% 86%, rgba(224, 160, 47, .28), transparent 32%),
+                radial-gradient(circle at 18% 90%, rgba(30, 110, 160, .4), transparent 34%);
+            animation: latar-bergeser 30s ease-in-out infinite alternate;
+        }
+
+        /* Motif kertas berpetak (buku tulis), sangat tipis */
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, .035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, .035) 1px, transparent 1px);
+            background-size: 32px 32px;
+            -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 85%);
+            mask-image: radial-gradient(ellipse at center, #000 30%, transparent 85%);
+        }
+
+        @keyframes latar-bergeser {
+            to {
+                transform: translate(3%, 2%) scale(1.08);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            body::before {
+                animation: none;
+            }
+        }
+
+        :focus-visible {
+            outline: 3px solid var(--gold);
+            outline-offset: 2px;
+        }
+
+        /* ---------- Header ---------- */
         .public-header {
             position: sticky;
             top: 0;
-            z-index: 1000;
+            z-index: 1100;
             flex: 0 0 auto;
             overflow: hidden;
-            border-bottom: 1px solid rgba(255, 255, 255, .12);
-            background: linear-gradient(110deg, #123e32, #312e81 58%, #0f172a);
-            color: #fff;
-            box-shadow: 0 10px 24px rgba(15, 23, 42, .18);
+            border-bottom: 1px solid var(--glass-edge);
+            background: rgba(10, 24, 22, .55);
+            -webkit-backdrop-filter: blur(var(--blur)) saturate(150%);
+            backdrop-filter: blur(var(--blur)) saturate(150%);
+            color: var(--ink);
+            box-shadow: var(--glass-shadow), var(--glass-inset);
         }
 
         .public-watermark {
@@ -51,7 +124,7 @@
             height: clamp(150px, 20vw, 230px);
             transform: translateX(30px) rotate(6deg);
             object-fit: contain;
-            opacity: .1;
+            opacity: .09;
             filter: grayscale(1) brightness(0) invert(1);
         }
 
@@ -73,7 +146,7 @@
             min-width: 0;
             align-items: center;
             gap: 10px;
-            color: #fff;
+            color: var(--ink);
             text-decoration: none;
         }
 
@@ -83,17 +156,16 @@
             height: 36px;
             flex: 0 0 auto;
             place-items: center;
-            border: 1px solid rgba(255, 255, 255, .2);
+            border: 1px solid rgba(245, 196, 81, .45);
             border-radius: 12px;
-            background: rgba(255, 255, 255, .1);
-            color: #bfdbfe;
-            box-shadow: 0 4px 12px rgba(15, 23, 42, .2);
-            backdrop-filter: blur(8px);
+            background: rgba(245, 196, 81, .12);
+            color: var(--gold);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, .35), var(--glass-inset);
             transition: background .2s ease;
         }
 
         .public-brand:hover .public-brand-mark {
-            background: rgba(255, 255, 255, .2);
+            background: rgba(245, 196, 81, .22);
         }
 
         .public-brand-copy {
@@ -110,7 +182,7 @@
         .public-brand-copy span {
             display: block;
             margin-top: 1px;
-            color: rgba(191, 219, 254, .82);
+            color: var(--ink-soft);
             font-size: 10px;
             white-space: nowrap;
         }
@@ -123,9 +195,10 @@
         }
 
         .menu a {
-            color: #dbeafe;
+            color: var(--ink-soft);
             text-decoration: none;
             padding: 7px 10px;
+            border: 1px solid transparent;
             border-radius: 10px;
             white-space: nowrap;
             font-size: 13px;
@@ -134,15 +207,16 @@
         }
 
         .menu a:hover {
-            background: rgba(255, 255, 255, .1);
-            color: #fff;
+            background: var(--glass);
+            border-color: var(--glass-edge);
+            color: var(--ink);
         }
 
         .menu a.aktif {
-            background: rgba(255, 255, 255, .2);
-            color: #fff;
+            background: rgba(245, 196, 81, .15);
+            border-color: rgba(245, 196, 81, .45);
+            color: var(--gold-soft);
             font-weight: 600;
-            box-shadow: 0 2px 8px rgba(15, 23, 42, .1);
         }
 
         .public-header-actions {
@@ -157,20 +231,21 @@
             min-height: 34px;
             align-items: center;
             justify-content: center;
-            padding: 0 13px;
-            border: 1px solid rgba(255, 255, 255, .18);
+            padding: 0 14px;
+            border: 1px solid rgba(255, 227, 160, .6);
             border-radius: 10px;
-            background: rgba(255, 255, 255, .1);
-            color: #fff;
+            background: linear-gradient(110deg, var(--gold), var(--gold-deep));
+            color: #1c1503;
             white-space: nowrap;
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 700;
             text-decoration: none;
-            transition: background .2s ease;
+            box-shadow: 0 6px 18px rgba(224, 160, 47, .28), inset 0 1px 0 rgba(255, 255, 255, .4);
+            transition: filter .2s ease;
         }
 
         .public-header-actions .masuk:hover {
-            background: rgba(255, 255, 255, .2);
+            filter: brightness(1.08);
         }
 
         .public-menu-button {
@@ -179,20 +254,22 @@
             height: 36px;
             align-items: center;
             justify-content: center;
-            border: 1px solid rgba(255, 255, 255, .2);
+            border: 1px solid var(--glass-edge);
             border-radius: 10px;
-            background: rgba(255, 255, 255, .1);
-            color: #fff;
+            background: var(--glass);
+            color: var(--ink);
             cursor: pointer;
+            box-shadow: var(--glass-inset);
         }
 
         .public-mobile-menu {
             position: relative;
             z-index: 1;
             padding: 4px 16px 14px;
-            border-top: 1px solid rgba(255, 255, 255, .1);
-            background: rgba(15, 23, 42, .7);
-            backdrop-filter: blur(12px);
+            border-top: 1px solid var(--glass-edge);
+            background: rgba(8, 20, 18, .7);
+            -webkit-backdrop-filter: blur(var(--blur));
+            backdrop-filter: blur(var(--blur));
         }
 
         .public-mobile-menu[hidden] {
@@ -208,15 +285,19 @@
         .public-mobile-menu nav a {
             padding: 10px 12px;
             border-radius: 9px;
-            color: #dbeafe;
+            color: var(--ink-soft);
             font-size: 14px;
             text-decoration: none;
         }
 
-        .public-mobile-menu nav a:hover,
+        .public-mobile-menu nav a:hover {
+            background: var(--glass);
+            color: var(--ink);
+        }
+
         .public-mobile-menu nav a.aktif {
-            background: rgba(255, 255, 255, .12);
-            color: #fff;
+            background: rgba(245, 196, 81, .15);
+            color: var(--gold-soft);
         }
 
         @media (max-width: 1100px) {
@@ -275,6 +356,7 @@
             }
         }
 
+        /* ---------- Konten ---------- */
         main {
             flex: 1;
             min-height: 0;
@@ -290,43 +372,58 @@
             align-items: center;
             padding: 10px 16px;
             font-size: 14px;
-            border-bottom: 1px solid rgba(255, 255, 255, .78);
-            background: rgba(255, 255, 255, .66);
-            box-shadow: 0 8px 24px rgba(31, 57, 74, .07);
-            backdrop-filter: blur(18px);
+            color: var(--ink);
+            border-bottom: 1px solid var(--glass-edge);
+            background: rgba(10, 24, 22, .5);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .3), var(--glass-inset);
+            -webkit-backdrop-filter: blur(var(--blur)) saturate(150%);
+            backdrop-filter: blur(var(--blur)) saturate(150%);
         }
 
         .toolbar input,
         .toolbar select,
         .toolbar button {
             padding: 8px 10px;
-            border: 1px solid rgba(203, 213, 225, .72);
+            border: 1px solid var(--glass-edge);
             border-radius: 10px;
             font-size: 14px;
-            background: rgba(255, 255, 255, .76);
-            color: #192a22;
-            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, .08);
+            color: var(--ink);
+            box-shadow: var(--glass-inset);
+        }
+
+        .toolbar select option {
+            background: #10201d;
+            color: var(--ink);
+        }
+
+        .toolbar input::placeholder {
+            color: var(--ink-soft);
         }
 
         .toolbar button {
-            background: linear-gradient(110deg, #247555, #312e81);
-            color: #fff;
-            border-color: rgba(255, 255, 255, .32);
+            background: linear-gradient(110deg, var(--gold), var(--gold-deep));
+            color: #1c1503;
+            font-weight: 700;
+            border-color: rgba(255, 227, 160, .6);
             cursor: pointer;
-            box-shadow: 0 7px 18px rgba(31, 57, 74, .12);
+            box-shadow: 0 7px 18px rgba(224, 160, 47, .25), inset 0 1px 0 rgba(255, 255, 255, .4);
         }
 
         .toolbar button:hover {
-            background: linear-gradient(110deg, #1a6048, #3730a3);
+            filter: brightness(1.08);
         }
 
+        /* Panel melayang & popup Leaflet */
         .panel,
         .leaflet-popup-content-wrapper,
         .leaflet-popup-tip {
-            border: 1px solid rgba(255, 255, 255, .82);
-            background: rgba(255, 255, 255, .82);
-            box-shadow: 0 14px 36px rgba(31, 57, 74, .16);
-            backdrop-filter: blur(18px);
+            border: 1px solid var(--glass-edge);
+            background: var(--glass-strong);
+            color: var(--ink);
+            box-shadow: var(--glass-shadow), var(--glass-inset);
+            -webkit-backdrop-filter: blur(var(--blur)) saturate(150%);
+            backdrop-filter: blur(var(--blur)) saturate(150%);
         }
 
         .peta {
@@ -337,13 +434,72 @@
         .panel {
             position: absolute;
             z-index: 1000;
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 12px 14px;
             font-size: 14px;
         }
 
         .leaflet-popup-content-wrapper {
-            border-radius: 14px;
+            border-radius: 16px;
+        }
+
+        .leaflet-popup-content a,
+        .panel a {
+            color: var(--gold);
+        }
+
+        .leaflet-container a.leaflet-popup-close-button {
+            color: var(--ink-soft);
+        }
+
+        .leaflet-container a.leaflet-popup-close-button:hover {
+            color: var(--gold);
+        }
+
+        /* Kontrol bawaan Leaflet */
+        .leaflet-bar {
+            border: 1px solid var(--glass-edge) !important;
+            border-radius: 14px !important;
+            overflow: hidden;
+            box-shadow: var(--glass-shadow) !important;
+        }
+
+        .leaflet-bar a {
+            background: var(--glass-strong);
+            color: var(--ink);
+            border-bottom-color: var(--glass-edge);
+            -webkit-backdrop-filter: blur(var(--blur));
+            backdrop-filter: blur(var(--blur));
+        }
+
+        .leaflet-bar a:hover {
+            background: rgba(245, 196, 81, .2);
+            color: var(--gold-soft);
+        }
+
+        .leaflet-control-attribution {
+            border-radius: 10px 0 0 0;
+            background: var(--glass-strong) !important;
+            color: var(--ink-soft) !important;
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+        }
+
+        .leaflet-control-attribution a {
+            color: var(--gold) !important;
+        }
+
+        /* Cadangan untuk peramban tanpa backdrop-filter: buat lebih pekat agar teks tetap terbaca */
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+            :root {
+                --glass-strong: rgba(12, 26, 24, .96);
+            }
+
+            .public-header,
+            .toolbar,
+            .public-mobile-menu {
+                background: rgba(12, 26, 24, .96);
+            }
         }
     </style>
     @stack('styles')

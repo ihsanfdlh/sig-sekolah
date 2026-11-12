@@ -1,10 +1,13 @@
+
 {
     "version": 2,
-      "framework": null,
+    "framework": null,
     "installCommand": "npm ci",
     "buildCommand": "npm run build",
     "functions": {
-        "api/index.php": { "runtime": "vercel-php@0.8.0" }
+        "api/index.php": {
+            "runtime": "vercel-php@0.8.0"
+        }
     },
     "routes": [
         {
@@ -32,6 +35,10 @@
             "dest": "/public/storage/$1"
         },
         {
+            "src": "/geojson/(.*)",
+            "dest": "/public/geojson/$1"
+        },
+        {
             "src": "/(.*)",
             "dest": "/api/index.php"
         }
@@ -41,14 +48,12 @@
         "APP_DEBUG": "false",
         "APP_URL": "https://sig-sekolah-public.vercel.app",
         "ASSET_URL": "https://sig-sekolah-public.vercel.app",
- 
         "APP_CONFIG_CACHE": "/tmp/config.php",
         "APP_EVENTS_CACHE": "/tmp/events.php",
         "APP_PACKAGES_CACHE": "/tmp/packages.php",
         "APP_ROUTES_CACHE": "/tmp/routes.php",
         "APP_SERVICES_CACHE": "/tmp/services.php",
         "VIEW_COMPILED_PATH": "/tmp",
- 
         "CACHE_DRIVER": "array",
         "LOG_CHANNEL": "stderr",
         "SESSION_DRIVER": "cookie"
