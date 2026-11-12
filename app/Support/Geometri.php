@@ -1,97 +1,47 @@
 <?php
-
+ 
 namespace App\Support;
-
+ 
 class Geometri
 {
     /**
-     * Menghitung Convex Hull menggunakan
-     * algoritma Monotone Chain.
+     * Convex hull dari daftar titik [x, y] (dalam hal ini [lng, lat]).
+     * Hasil berurutan berlawanan arah jarum jam, tanpa titik penutup.
      */
     public static function convexHull(array $titik): array
     {
-        // Validasi koordinat
-        $titik = array_values(array_filter(
-            $titik,
-            fn ($p) =>
-                is_array($p) &&
-                count($p) >= 2 &&
-                is_numeric($p[0]) &&
-                is_numeric($p[1]) &&
-                is_finite((float) $p[0]) &&
-                is_finite((float) $p[1])
-        ));
-
-        // Hilangkan koordinat duplikat
-        $unik = [];
-
-        foreach ($titik as $p) {
-            $x = (float) $p[0];
-            $y = (float) $p[1];
-
-            $unik[json_encode([$x, $y])] = [$x, $y];
-        }
-
-        $titik = array_values($unik);
-
+        $titik = array_values(array_unique($titik, SORT_REGULAR));
+        usort($titik, fn ($a, $b) => [$a[0], $a[1]] <=> [$b[0], $b[1]]);
+ 
         if (count($titik) < 3) {
-            return [];
+            return $titik;
         }
-
-        // Urutkan berdasarkan longitude dan latitude
-        usort($titik, function ($a, $b) {
-            return ($a[0] <=> $b[0])
-                ?: ($a[1] <=> $b[1]);
-        });
-
-        // Menghitung cross product
-        $cross = function ($o, $a, $b) {
-            return ($a[0] - $o[0]) * ($b[1] - $o[1])
-                 - ($a[1] - $o[1]) * ($b[0] - $o[0]);
-        };
-
-        // Membentuk hull bagian bawah
-        $lower = [];
-
+ 
+        // > 0: belok kiri, < 0: belok kanan, 0: segaris
+        $silang = fn ($o, $a, $b) =>
+            ($a[0] - $o[0]) * ($b[1] - $o[1]) - ($a[1] - $o[1]) * ($b[0] - $o[0]);
+ 
+        $bawah = [];
         foreach ($titik as $p) {
-            while (
-                count($lower) >= 2 &&
-                $cross(
-                    $lower[count($lower) - 2],
-                    $lower[count($lower) - 1],
-                    $p
-                ) <= 0
-            ) {
-                array_pop($lower);
+            while (count($bawah) >= 2
+                && $silang($bawah[count($bawah) - 2], $bawah[count($bawah) - 1], $p) <= 0) {
+                array_pop($bawah);
             }
-
-            $lower[] = $p;
+            $bawah[] = $p;
         }
-
-        // Membentuk hull bagian atas
-        $upper = [];
-
+ 
+        $atas = [];
         foreach (array_reverse($titik) as $p) {
-            while (
-                count($upper) >= 2 &&
-                $cross(
-                    $upper[count($upper) - 2],
-                    $upper[count($upper) - 1],
-                    $p
-                ) <= 0
-            ) {
-                array_pop($upper);
+            while (count($atas) >= 2
+                && $silang($atas[count($atas) - 2], $atas[count($atas) - 1], $p) <= 0) {
+                array_pop($atas);
             }
-
-            $upper[] = $p;
+            $atas[] = $p;
         }
-
-        // Gabungkan kedua bagian
-        array_pop($lower);
-        array_pop($upper);
-
-        $hasil = array_merge($lower, $upper);
-
-        return count($hasil) >= 3 ? $hasil : [];
+ 
+        array_pop($bawah);
+        array_pop($atas);
+ 
+        return array_merge($bawah, $atas);
     }
 }

@@ -22,6 +22,8 @@ Route::controller(PetaController::class)->group(function () {
     Route::get('/pencarian', 'cari')->name('peta.cari');
     Route::get('/klaster', 'klaster')->name('peta.klaster');
     Route::get('/peta-panas', 'panas')->name('peta.panas');
+    Route::get('/wilayah', 'wilayah')->name('peta.wilayah');
+    Route::get('/data/wilayah', 'geojsonWilayah')->name('peta.data.wilayah');   
 });
 
 

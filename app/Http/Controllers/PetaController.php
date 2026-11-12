@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Sekolah;
-use App\Support\Geometri; 
+use App\Support\Geometri;
 use Illuminate\Http\Request;
 
 class PetaController extends Controller
@@ -13,7 +13,7 @@ class PetaController extends Controller
     {
         return view('peta.index');
     }
- 
+
     public function cari()
     {
         return view('peta.cari');
@@ -25,16 +25,16 @@ class PetaController extends Controller
     }
 
     public function panas()
-{
-    return view('peta.panas');
-}
+    {
+        return view('peta.panas');
+    }
 
     public function geojson(Request $request)
     {
         $features = Sekolah::with('profil')
-            ->when($request->jenjang, fn ($q, $j) => $q->where('jenjang', $j))
+            ->when($request->jenjang, fn($q, $j) => $q->where('jenjang', $j))
             ->get()
-            ->map(fn ($s) => [
+            ->map(fn($s) => [
                 'type' => 'Feature',
                 'geometry' => [
                     'type' => 'Point',
@@ -62,52 +62,51 @@ class PetaController extends Controller
     }
 
     public function wilayah()
-{
-    return view('peta.wilayah');
-}
- 
-public function geojsonWilayah(Request $request)
-{
-    $features = Sekolah::with('profil')
-        ->when($request->jenjang, fn ($q, $j) => $q->where('jenjang', $j))
-        ->get()
-        ->groupBy('kecamatan')
-        ->map(function ($kelompok, $kecamatan) {
-            $titik = $kelompok
-                ->map(fn ($s) => [$s->longitude, $s->latitude])
-                ->all();
- 
-            $hull = Geometri::convexHull($titik);
- 
-            // Poligon memerlukan minimal 3 titik yang tidak segaris
-            if (count($hull) < 3) {
-                return null;
-            }
- 
-            $hull[] = $hull[0]; // GeoJSON: cincin poligon harus tertutup
- 
-            return [
-                'type' => 'Feature',
-                'geometry' => [
-                    'type' => 'Polygon',
-                    'coordinates' => [$hull],
-                ],
-                'properties' => [
-                    'kecamatan'      => $kecamatan,
-                    'jumlah_sekolah' => $kelompok->count(),
-                    'jumlah_siswa'   => (int) $kelompok->sum(
-                        fn ($s) => $s->profil?->jumlah_siswa ?? 0
-                    ),
-                ],
-            ];
-        })
-        ->filter()
-        ->values();
- 
-    return response()->json([
-        'type'     => 'FeatureCollection',
-        'features' => $features,
-    ]);
-}
+    {
+        return view('peta.wilayah');
+    }
 
+    public function geojsonWilayah(Request $request)
+    {
+        $features = Sekolah::with('profil')
+            ->when($request->jenjang, fn($q, $j) => $q->where('jenjang', $j))
+            ->get()
+            ->groupBy('kecamatan')
+            ->map(function ($kelompok, $kecamatan) {
+                $titik = $kelompok
+                    ->map(fn($s) => [$s->longitude, $s->latitude])
+                    ->all();
+
+                $hull = Geometri::convexHull($titik);
+
+                // Poligon memerlukan minimal 3 titik yang tidak segaris
+                if (count($hull) < 3) {
+                    return null;
+                }
+
+                $hull[] = $hull[0]; // GeoJSON: cincin poligon harus tertutup
+
+                return [
+                    'type' => 'Feature',
+                    'geometry' => [
+                        'type' => 'Polygon',
+                        'coordinates' => [$hull],
+                    ],
+                    'properties' => [
+                        'kecamatan'      => $kecamatan,
+                        'jumlah_sekolah' => $kelompok->count(),
+                        'jumlah_siswa'   => (int) $kelompok->sum(
+                            fn($s) => $s->profil?->jumlah_siswa ?? 0
+                        ),
+                    ],
+                ];
+            })
+            ->filter()
+            ->values();
+
+        return response()->json([
+            'type'     => 'FeatureCollection',
+            'features' => $features,
+        ]);
+    }
 }
