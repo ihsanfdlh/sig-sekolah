@@ -21,6 +21,7 @@ Route::controller(PetaController::class)->group(function () {
     Route::get('/data/sekolah', 'geojson')->name('peta.data');
     Route::get('/pencarian', 'cari')->name('peta.cari');
     Route::get('/klaster', 'klaster')->name('peta.klaster');
+    Route::get('/peta-panas', 'panas')->name('peta.panas');
 });
 
 
