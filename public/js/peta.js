@@ -21,8 +21,14 @@ const Peta = {
     },
  
     // Mengambil seluruh fitur (Feature) sekolah dari endpoint GeoJSON
-    async ambilSekolah(jenjang = '') {
-        const url = `${window.PETA_URL.data}?jenjang=${encodeURIComponent(jenjang)}`;
+    async ambilSekolah(jenjang = '', status = '') {
+        const params = new URLSearchParams({ jenjang });
+
+        if (status) {
+            params.set('status', status);
+        }
+
+        const url = `${window.PETA_URL.data}?${params}`;
         const respon = await fetch(url);
  
         if (!respon.ok) {

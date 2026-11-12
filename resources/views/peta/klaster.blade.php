@@ -19,6 +19,13 @@
             <option value="SMK">SMK</option>
         </select>
     </label>
+        <label>Status
+            <select id="filter-status">
+                <option value="">Semua status</option>
+                <option value="Negeri">Negeri</option>
+                <option value="Swasta">Swasta</option>
+            </select>
+        </label>
     <span id="jumlah"></span>
     <span style="color: #6b7280;">
         Klik angka pada klaster untuk memperbesar peta.
@@ -42,25 +49,82 @@
     });
     map.addLayer(klaster);
  
-    async function muat(jenjang = '') {
-        const fitur = await Peta.ambilSekolah(jenjang);
- 
-        klaster.clearLayers();
-        klaster.addLayers(fitur.map((f) =>
-            L.marker(Peta.latlng(f)).bindPopup(Peta.popup(f))
-        ));
- 
-        document.getElementById('jumlah').textContent =
-            fitur.length + ' sekolah';
- 
-        if (fitur.length > 0) {
-            map.fitBounds(L.latLngBounds(fitur.map(Peta.latlng)).pad(0.1));
+    const filterJenjang = document.getElementById('filter-jenjang');
+    const filterStatus = document.getElementById('filter-status');
+    const jumlah = document.getElementById('jumlah');
+
+    let requestTerakhir = 0;
+
+    async function muat(jenjang = '', status = '') {
+        const requestId = ++requestTerakhir;
+
+        try {
+            jumlah.textContent = 'Memuat data...';
+
+            const fitur = await Peta.ambilSekolah(jenjang, status);
+
+            if (requestId !== requestTerakhir) return;
+
+            klaster.clearLayers();
+
+            const markers = [];
+
+            fitur.forEach((f) => {
+                try {
+                    const koordinat = Peta.latlng(f);
+
+                    if (!koordinat) return;
+
+                    const latlng = L.latLng(koordinat);
+
+                    if (
+                        !Number.isFinite(latlng.lat) ||
+                        !Number.isFinite(latlng.lng) ||
+                        Math.abs(latlng.lat) > 90 ||
+                        Math.abs(latlng.lng) > 180
+                    ) {
+                        return;
+                    }
+
+                    const marker = L.marker(latlng)
+                        .bindPopup(Peta.popup(f));
+
+                    markers.push(marker);
+
+                } catch (error) {
+                    console.warn('Koordinat sekolah tidak valid:', error);
+                }
+            });
+
+            klaster.addLayers(markers);
+
+            jumlah.textContent = markers.length + ' sekolah';
+
+            if (markers.length > 0) {
+                const bounds = L.latLngBounds(
+                    markers.map(marker => marker.getLatLng())
+                );
+
+                if (bounds.isValid()) {
+                    map.fitBounds(bounds.pad(0.1));
+                }
+            }
+
+        } catch (error) {
+            if (requestId !== requestTerakhir) return;
+
+            console.error('Gagal memuat sekolah:', error);
+            jumlah.textContent = 'Gagal memuat data';
         }
     }
- 
-    document.getElementById('filter-jenjang')
-        .addEventListener('change', (e) => muat(e.target.value));
- 
-    muat();
+
+    function terapkanFilter() {
+        muat(filterJenjang.value, filterStatus.value);
+    }
+
+    filterJenjang.addEventListener('change', terapkanFilter);
+    filterStatus.addEventListener('change', terapkanFilter);
+
+    terapkanFilter();
 </script>
 @endpush
