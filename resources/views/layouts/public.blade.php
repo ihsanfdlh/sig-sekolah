@@ -17,6 +17,11 @@
         body {
             display: flex;
             flex-direction: column;
+            background:
+                radial-gradient(ellipse at 10% 0%, rgba(180, 218, 196, .36), transparent 34%),
+                radial-gradient(ellipse at 100% 20%, rgba(199, 210, 254, .32), transparent 38%),
+                linear-gradient(145deg, #f3f7f5, #eef2f8 58%, #f7f8f6);
+            color: #192a22;
         }
 
         .public-header {
@@ -285,24 +290,43 @@
             align-items: center;
             padding: 10px 16px;
             font-size: 14px;
-            background: #f3f4f6;
-            border-bottom: 1px solid #d1d5db;
+            border-bottom: 1px solid rgba(255, 255, 255, .78);
+            background: rgba(255, 255, 255, .66);
+            box-shadow: 0 8px 24px rgba(31, 57, 74, .07);
+            backdrop-filter: blur(18px);
         }
 
         .toolbar input,
         .toolbar select,
         .toolbar button {
             padding: 8px 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
+            border: 1px solid rgba(203, 213, 225, .72);
+            border-radius: 10px;
             font-size: 14px;
+            background: rgba(255, 255, 255, .76);
+            color: #192a22;
+            backdrop-filter: blur(12px);
         }
 
         .toolbar button {
-            background: #1e3a8a;
+            background: linear-gradient(110deg, #247555, #312e81);
             color: #fff;
-            border-color: #1e3a8a;
+            border-color: rgba(255, 255, 255, .32);
             cursor: pointer;
+            box-shadow: 0 7px 18px rgba(31, 57, 74, .12);
+        }
+
+        .toolbar button:hover {
+            background: linear-gradient(110deg, #1a6048, #3730a3);
+        }
+
+        .panel,
+        .leaflet-popup-content-wrapper,
+        .leaflet-popup-tip {
+            border: 1px solid rgba(255, 255, 255, .82);
+            background: rgba(255, 255, 255, .82);
+            box-shadow: 0 14px 36px rgba(31, 57, 74, .16);
+            backdrop-filter: blur(18px);
         }
 
         .peta {
@@ -313,11 +337,13 @@
         .panel {
             position: absolute;
             z-index: 1000;
-            background: #fff;
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 12px 14px;
             font-size: 14px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, .2);
+        }
+
+        .leaflet-popup-content-wrapper {
+            border-radius: 14px;
         }
     </style>
     @stack('styles')

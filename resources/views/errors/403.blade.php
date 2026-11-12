@@ -7,27 +7,42 @@
     <style>
         * { box-sizing: border-box; }
         body {
+            position: relative;
+            isolation: isolate;
+            overflow: hidden;
             display: grid;
             min-height: 100vh;
             place-items: center;
             margin: 0;
             padding: 24px;
             background:
-                radial-gradient(ellipse at 10% 0%, rgba(180, 218, 196, .36), transparent 34%),
-                radial-gradient(ellipse at 100% 20%, rgba(199, 210, 254, .32), transparent 38%),
-                linear-gradient(145deg, #f3f7f5, #eef2f8 58%, #f7f8f6);
-            color: #192a22;
+                radial-gradient(ellipse at 12% 12%, rgba(94, 169, 130, .34), transparent 36%),
+                radial-gradient(ellipse at 88% 18%, rgba(129, 140, 248, .38), transparent 38%),
+                linear-gradient(125deg, #0f2927, #142d3b 52%, #252b55);
+            color: #fff;
             font-family: system-ui, sans-serif;
         }
+        body::before {
+            position: absolute;
+            z-index: -1;
+            right: -60px;
+            bottom: -110px;
+            width: min(52vw, 520px);
+            aspect-ratio: 1;
+            background: url('{{ asset('storage/Assets/tut-wuri-handayani.png') }}') center / contain no-repeat;
+            content: "";
+            opacity: .1;
+            filter: grayscale(1) brightness(0) invert(1);
+        }
         .box {
+            position: relative;
             width: min(100%, 30rem);
             padding: clamp(24px, 6vw, 40px);
-            border: 1px solid rgba(255, 255, 255, .86);
-            border-top: 4px solid #c59a47;
+            border: 1px solid rgba(255, 255, 255, .48);
             border-radius: 20px;
-            background: rgba(255, 255, 255, .7);
-            box-shadow: 0 22px 60px rgba(25, 55, 39, .14);
-            backdrop-filter: blur(22px);
+            background: rgba(255, 255, 255, .16);
+            box-shadow: 0 28px 80px rgba(4, 12, 27, .32), inset 0 1px 0 rgba(255, 255, 255, .22);
+            backdrop-filter: blur(28px) saturate(145%);
         }
         .eyebrow {
             display: inline-flex;
@@ -41,15 +56,15 @@
             font-weight: 700;
             letter-spacing: .06em;
         }
-        h1 { margin: 0; color: #174d3c; font-size: clamp(26px, 5vw, 34px); }
-        p { color: #68786f; line-height: 1.65; }
+        h1 { margin: 0; color: #fff; font-size: clamp(26px, 5vw, 34px); }
+        p { color: rgba(226, 232, 240, .82); line-height: 1.65; }
         a {
             display: inline-flex;
             min-height: 42px;
             align-items: center;
             padding: 0 16px;
             border-radius: 10px;
-            background: linear-gradient(135deg, #247555, #312e81);
+            background: linear-gradient(110deg, #247555, #312e81);
             color: white;
             font-size: 14px;
             font-weight: 650;

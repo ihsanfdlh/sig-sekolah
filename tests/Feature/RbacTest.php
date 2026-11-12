@@ -40,6 +40,20 @@ class RbacTest extends TestCase
         $this->get('/dashboard')->assertRedirect('/login');
     }
 
+    public function test_login_page_shows_education_theme_and_login_form(): void
+    {
+        $response = $this->get('/login');
+
+        $response
+            ->assertOk()
+            ->assertSee('Pendidikan kuat,', false)
+            ->assertSee('auth-education-art', false)
+            ->assertSee('storage/Assets/tut-wuri-handayani.png')
+            ->assertSee('aria-label="Form masuk"', false)
+            ->assertSee('name="email"', false)
+            ->assertSee('name="password"', false);
+    }
+
     public function test_login_gagal_dan_berhasil(): void
     {
         $u = $this->user('dinas');
@@ -62,7 +76,10 @@ class RbacTest extends TestCase
         $admin = $this->user('admin');
         $this->user('dinas');
         $this->user('sekolah');
-        $this->actingAs($admin)->get('/dashboard')->assertOk();
+        $this->actingAs($admin)->get('/dashboard')
+            ->assertOk()
+            ->assertSee('app-site-header', false)
+            ->assertSee('storage/Assets/tut-wuri-handayani.png');
     }
 
     public function test_admin_melihat_role_tersimpan_saat_mengubah_pengguna(): void

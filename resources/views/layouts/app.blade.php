@@ -12,7 +12,7 @@
 <body class="app-page min-h-screen bg-slate-50 text-slate-800 antialiased flex flex-col">
 
     <!-- Header / Navbar Utama dengan Siluet Tut Wuri Handayani -->
-    <header class="relative bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white shadow-lg overflow-hidden sticky top-0 z-[1000]">
+    <header class="app-site-header relative bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white shadow-lg overflow-hidden sticky top-0 z-[1000]">
 
         <!-- Siluet Tut Wuri Handayani pada Background Navbar -->
         <div class="pointer-events-none absolute inset-0 flex items-center justify-end overflow-hidden">
