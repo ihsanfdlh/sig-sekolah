@@ -46,6 +46,10 @@
 <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
 <script>
     const map = Peta.buat('peta');
+    const pusatJaro = [-1.8505, 115.6350];
+    const zoomAwal = 12;
+    map.setView(pusatJaro, zoomAwal);
+
 
     const layerMarker = L.layerGroup();
 
