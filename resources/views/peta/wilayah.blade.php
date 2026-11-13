@@ -1,5 +1,6 @@
 @extends('layouts.public')
 @section('title', 'Wilayah')
+@section('page-style-class', 'region-page')
 
 @section('content')
     <div class="toolbar">
@@ -17,13 +18,13 @@
 
     <div id="peta" class="peta"></div>
 
-    <div class="panel" style="right: 12px; bottom: 24px; font-size: 13px;">
+    <div class="panel wilayah-legend">
         <strong>Jumlah sekolah</strong>
-        <div><span style="color: #dc2626;">&#9632;</span> Terbanyak</div>
-        <div><span style="color: #ea580c;">&#9632;</span> Banyak</div>
-        <div><span style="color: #f59e0b;">&#9632;</span> Sedang</div>
-        <div><span style="color: #3b82f6;">&#9632;</span> Sedikit</div>
-        <small style="color: #6b7280;">Relatif terhadap kecamatan terbanyak</small>
+        <div><span class="wilayah-legend-high">&#9632;</span> Terbanyak</div>
+        <div><span class="wilayah-legend-many">&#9632;</span> Banyak</div>
+        <div><span class="wilayah-legend-medium">&#9632;</span> Sedang</div>
+        <div><span class="wilayah-legend-low">&#9632;</span> Sedikit</div>
+        <small class="wilayah-legend-note">Relatif terhadap kecamatan terbanyak</small>
     </div>
 @endsection
 

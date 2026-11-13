@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="admin-app">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,47 +7,7 @@
     <link rel="icon" href="{{ asset('storage/Assets/tut-wuri-handayani.png') }}">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <style>
-        :root{--sky:#5F91AC;--sky-soft:#A3C4D4;--sky-ink:#294B63;--sky-muted:#607C91;--sky-line:#D6E5ED;--sky-paper:#F2F8FC}
-        body.app-page{background:#F7FAFC!important;background-image:none!important;color:#294B63!important}
-        body.app-page::before,body.app-page::after{display:none!important}
-        .edu-header{position:sticky;top:0;z-index:1100;width:100%;background:linear-gradient(110deg,#F7FBFE 0%,#ECF5FB 55%,#E5F2F9 100%)!important;background-image:linear-gradient(110deg,#F7FBFE 0%,#ECF5FB 55%,#E5F2F9 100%)!important;border-bottom:1px solid #C9E1EC;box-shadow:0 5px 20px rgba(42,83,108,.10);color:var(--sky-ink)!important;isolation:isolate}
-        .edu-header::before,.edu-header::after{display:none!important}
-        .edu-header-watermark{position:absolute;right:1%;top:0;height:100%;width:220px;overflow:hidden;pointer-events:none;z-index:-1}
-        .edu-header-watermark img{position:absolute;right:-20px;top:50%;height:185px;width:185px;transform:translateY(-50%);object-fit:contain;opacity:.075;filter:grayscale(1)}
-        .edu-header-inner{display:grid;grid-template-columns:minmax(285px,1fr) auto minmax(140px,1fr);align-items:center;gap:18px;max-width:1700px;margin:auto;min-height:96px;padding:14px 34px}
-        .edu-brand{display:flex;align-items:center;gap:17px;min-width:0;text-decoration:none!important;color:var(--sky-ink)!important}
-        .edu-brand-logo{height:62px;width:62px;flex-shrink:0;display:grid;place-items:center}
-        .edu-brand-logo img{height:100%;width:100%;object-fit:contain;filter:none!important;opacity:1!important}
-        .edu-brand-divider{height:49px;width:1px;background:#BED5E2;flex-shrink:0}
-        .edu-brand-name{display:block;font-size:26px;font-weight:800;line-height:1.13;letter-spacing:-.7px;color:#284A63!important;white-space:nowrap}
-        .edu-brand-description{display:block;margin-top:6px;font-size:12px;font-weight:500;color:#526E83!important;white-space:nowrap}
-        .edu-nav{display:flex;align-items:center;justify-content:center;gap:5px;min-width:0}
-        .edu-nav-link{display:inline-flex;align-items:center;gap:9px;min-height:45px;padding:0 12px;border:1px solid transparent;border-radius:12px;color:#294B63!important;background:transparent!important;text-decoration:none!important;font-size:13px;font-weight:650;white-space:nowrap;transition:background .2s,border-color .2s,box-shadow .2s}
-        .edu-nav-link svg{width:19px;height:19px;flex-shrink:0;stroke:currentColor}
-        .edu-nav-link:hover{background:#DDECF5!important;border-color:#C9E1ED}
-        .edu-nav-link.is-active{background:#5F91AC!important;color:#FFF!important;border-color:#5F91AC;box-shadow:0 5px 14px rgba(95,145,172,.20)}
-        .edu-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;min-width:0}
-        .edu-user{display:flex;align-items:center;gap:11px;padding:6px 14px 6px 6px;border:1px solid rgba(190,213,226,.9);border-radius:14px;background:rgba(255,255,255,.72);box-shadow:0 5px 18px rgba(41,75,99,.06);backdrop-filter:blur(12px);max-width:205px;min-width:0;transition:background .2s,border-color .2s,box-shadow .2s}.edu-user:hover{background:rgba(255,255,255,.95);border-color:#A3C4D4;box-shadow:0 7px 20px rgba(41,75,99,.10)}
-        .edu-avatar{height:38px;width:38px;flex-shrink:0;display:grid;place-items:center;border-radius:11px;background:linear-gradient(135deg,#5F91AC,#8DB5CA);color:#fff;font-size:15px;font-weight:800;box-shadow:0 3px 10px rgba(95,145,172,.2)}
-        .edu-user-name{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:800;color:#294B63;line-height:1.4}
-        .edu-user-role{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;color:#668398;line-height:1.5}
-        .edu-login,.edu-logout{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;padding:0 17px;border-radius:11px;font-size:13px;font-weight:750;text-decoration:none!important;white-space:nowrap;cursor:pointer;transition:background .2s}
-        .edu-login{background:#5F91AC!important;color:#FFF!important;border:1px solid #5F91AC}
-        .edu-login:hover{background:#4B7D98!important}
-        .edu-logout{background:rgba(255,255,255,.7)!important;color:#416D86!important;border:1px solid #C9DEE9;box-shadow:0 4px 14px rgba(41,75,99,.05);backdrop-filter:blur(12px);transition:background .2s,color .2s,border-color .2s,transform .2s}
-        .edu-logout:hover{background:#E1EFF6!important;color:#294B63!important;border-color:#A3C4D4;transform:translateY(-1px)}.edu-logout:focus-visible{outline:3px solid rgba(95,145,172,.28);outline-offset:2px}.edu-logout:active{transform:translateY(0)}
-        .edu-login svg,.edu-logout svg{width:17px;height:17px}
-        .edu-toggle{display:none;align-items:center;justify-content:center;height:42px;width:42px;border:1px solid #C9DEE9;border-radius:11px;background:#FFF!important;color:#294B63!important;cursor:pointer}
-        .edu-mobile{background:#F0F7FB!important;border-top:1px solid #D6E5ED;padding:12px 20px 18px}
-        .edu-mobile[hidden]{display:none!important}
-        .edu-mobile a{display:flex;align-items:center;gap:10px;padding:12px 13px;border-radius:10px;color:#294B63!important;font-size:14px;font-weight:650;text-decoration:none!important}
-        .edu-mobile a:hover,.edu-mobile a.is-active{background:#DCECF5!important}
-        .edu-mobile svg{width:18px;height:18px}
-        @media(max-width:1500px){.edu-header-inner{grid-template-columns:minmax(250px,1fr) auto auto;gap:12px;padding:12px 24px}.edu-nav-link{padding:0 9px;gap:6px;font-size:12px}.edu-brand-name{font-size:23px}.edu-brand-logo{height:55px;width:55px}}
-        @media(max-width:1230px){.edu-header-inner{grid-template-columns:1fr auto;min-height:82px}.edu-nav{display:none}.edu-toggle{display:inline-flex}.edu-brand-name{font-size:22px}}
-        @media(max-width:640px){.edu-header-inner{padding:10px 14px;min-height:72px;gap:8px}.edu-brand{gap:9px}.edu-brand-logo{width:42px;height:42px}.edu-brand-divider{height:36px}.edu-brand-name{font-size:17px}.edu-brand-description{display:none}.edu-user{display:flex;max-width:48px;padding:4px;border-radius:12px}.edu-user .min-w-0{display:none}.edu-avatar{height:34px;width:34px}.edu-actions{gap:6px}.edu-logout{gap:5px;padding:0 9px}.edu-login,.edu-logout{padding:0 10px;min-height:38px;font-size:12px}.edu-toggle{height:38px;width:38px}.edu-header-watermark img{height:130px;width:130px}}
-    </style>
+
     @stack('styles')
 </head>
 <body class="app-page min-h-screen flex flex-col antialiased">

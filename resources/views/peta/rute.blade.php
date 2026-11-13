@@ -1,42 +1,29 @@
 @extends('layouts.public')
 @section('title', 'Rute')
- 
-@push('styles')
-<style>
-    .daftar { list-style: none; margin: 8px 0; padding: 0;
-              max-height: 40vh; overflow: auto; }
-    .daftar li { padding: 4px 0; border-top: 1px solid #e5e7eb; }
-    .daftar label { cursor: pointer; display: flex; gap: 8px;
-                    align-items: center; }
-    .btn { padding: 8px 12px; border: 0; border-radius: 6px;
-           background: #1e3a8a; color: #fff; cursor: pointer; }
-    .btn-abu { background: #6b7280; }
-    .btn:disabled { opacity: .6; cursor: wait; }
-</style>
-@endpush
- 
+@section('page-style-class', 'route-page')
+
+
 @section('content')
 <div id="peta" class="peta"></div>
- 
-<div class="panel" style="top: 12px; left: 60px; width: 300px;">
+
+<div class="panel route-panel">
     <strong>Rute kunjungan sekolah</strong>
-    <p style="margin: 4px 0; color: #6b7280;">
+    <p class="route-description">
         Pilih 2 sampai 10 sekolah. Urutan rute mengikuti urutan Anda mencentang.
     </p>
     <input type="search" id="kata" placeholder="Cari sekolah"
-           style="width: 100%; box-sizing: border-box; padding: 6px;">
+           class="route-search">
     <ul id="daftar" class="daftar"></ul>
-    <div style="display: flex; gap: 8px;">
+    <div class="route-actions">
         <button id="buat" class="btn" type="button">Buat Rute</button>
         <button id="reset" class="btn btn-abu" type="button">Reset</button>
     </div>
-    <p id="urutan" style="margin: 8px 0 0; font-size: 13px;"></p>
+    <p id="urutan" class="route-order"></p>
 </div>
- 
-<div id="info" class="panel"
-     style="right: 12px; bottom: 24px; min-width: 220px; display: none;"></div>
+
+<div id="info" class="panel route-info" hidden></div>
 @endsection
- 
+
 @push('scripts')
 <script src="https://unpkg.com/leaflet-polylinedecorator@1.6.0/dist/leaflet.polylineDecorator.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
@@ -106,12 +93,12 @@ L.control.layers(baseLayers, null, {
     const lapisanRute = L.layerGroup().addTo(map);
     const semua = new Map();   // npsn => fitur
     let terpilih = [];         // urutan npsn yang dicentang
- 
+
     function gambarDaftar() {
         const kata = document.getElementById('kata').value.trim().toLowerCase();
         const ul = document.getElementById('daftar');
         ul.innerHTML = '';
- 
+
         [...semua.values()]
             .filter((f) => f.properties.nama.toLowerCase().includes(kata))
             .forEach((f) => {
@@ -120,16 +107,16 @@ L.control.layers(baseLayers, null, {
                 cek.type = 'checkbox';
                 cek.checked = terpilih.includes(npsn);
                 cek.addEventListener('change', () => ubahPilihan(npsn, cek));
- 
+
                 const label = document.createElement('label');
                 label.append(cek, ` ${f.properties.nama}`);
- 
+
                 const li = document.createElement('li');
                 li.appendChild(label);
                 ul.appendChild(li);
             });
     }
- 
+
     function ubahPilihan(npsn, cek) {
         if (cek.checked) {
             if (terpilih.length >= MAKS) {
@@ -143,26 +130,26 @@ L.control.layers(baseLayers, null, {
         }
         tampilUrutan();
     }
- 
+
     function tampilUrutan() {
         document.getElementById('urutan').textContent = terpilih
             .map((n, i) => `${i + 1}. ${semua.get(n).properties.nama}`)
             .join(' \u2192 ');
     }
- 
+
     // titik: [[lat, lng], ...]
     async function ambilRute(titik) {
         const koordinat = titik.map(([lat, lng]) => `${lng},${lat}`).join(';');
- 
+
         try {
             const respon = await fetch(
                 `https://router.project-osrm.org/route/v1/driving/${koordinat}?overview=full&geometries=geojson`
             );
             if (!respon.ok) throw new Error('HTTP ' + respon.status);
- 
+
             const rute = (await respon.json()).routes?.[0];
             if (!rute) throw new Error('Rute tidak ditemukan');
- 
+
             return {
                 sumber: 'OSRM',
                 garis: rute.geometry.coordinates.map(([lng, lat]) => [lat, lng]),
@@ -175,13 +162,13 @@ L.control.layers(baseLayers, null, {
             };
         } catch (e) {
             console.error(e);
- 
+
             // Cadangan: garis lurus dan jarak Haversine
             const legs = titik.slice(1).map((t, i) => ({
                 jarak: Peta.jarakKm(titik[i], t),
                 durasi: null,
             }));
- 
+
             return {
                 sumber: 'Garis lurus',
                 garis: titik,
@@ -191,27 +178,27 @@ L.control.layers(baseLayers, null, {
             };
         }
     }
- 
+
     async function buatRute() {
         if (terpilih.length < 2) {
             alert('Pilih minimal 2 sekolah.');
             return;
         }
- 
+
         const fitur = terpilih.map((n) => semua.get(n));
         const titik = fitur.map(Peta.latlng);
- 
+
         const tombol = document.getElementById('buat');
         tombol.disabled = true;
         const rute = await ambilRute(titik);
         tombol.disabled = false;
- 
+
         lapisanRute.clearLayers();
- 
+
         const garis = L.polyline(rute.garis, {
             color: '#3b82f6', weight: 4, opacity: 0.8,
         }).addTo(lapisanRute);
- 
+
         L.polylineDecorator(garis, {
             patterns: [{
                 offset: '5%',
@@ -223,7 +210,7 @@ L.control.layers(baseLayers, null, {
                 }),
             }],
         }).addTo(lapisanRute);
- 
+
         fitur.forEach((f, i) => {
             const warna = i === 0 ? '#16a34a'
                 : i === fitur.length - 1 ? '#dc2626' : '#2563eb';
@@ -232,7 +219,7 @@ L.control.layers(baseLayers, null, {
                 ? `<br>Dari titik sebelumnya: ${leg.jarak.toFixed(2)} km`
                     + (leg.durasi ? ` (${Math.round(leg.durasi)} menit)` : '')
                 : '';
- 
+
             L.marker(titik[i], { icon: Peta.ikonAngka(i + 1, warna) })
                 .bindPopup(`
                     <strong>${i + 1}. ${Peta.esc(f.properties.nama)}</strong><br>
@@ -240,9 +227,9 @@ L.control.layers(baseLayers, null, {
                 `)
                 .addTo(lapisanRute);
         });
- 
+
         const info = document.getElementById('info');
-        info.style.display = 'block';
+        info.hidden = false;
         info.innerHTML = `
             <strong>Informasi rute</strong><br>
             Jumlah titik: ${fitur.length}<br>
@@ -252,32 +239,32 @@ L.control.layers(baseLayers, null, {
                 ? 'mengikuti jalan (OSRM)'
                 : 'garis lurus (layanan rute tidak tersedia)'}</small>
         `;
- 
+
         map.fitBounds(garis.getBounds().pad(0.1));
     }
- 
+
     function reset() {
         terpilih = [];
         lapisanRute.clearLayers();
-        document.getElementById('info').style.display = 'none';
+        document.getElementById('info').hidden = true;
         tampilUrutan();
         gambarDaftar();
     }
- 
+
     document.getElementById('kata').addEventListener('input', gambarDaftar);
     document.getElementById('buat').addEventListener('click', buatRute);
     document.getElementById('reset').addEventListener('click', reset);
- 
+
     Peta.ambilSekolah().then((fitur) => {
         fitur.forEach((f) => {
             semua.set(f.properties.npsn, f);
- 
+
             // Titik abu-abu sebagai konteks letak seluruh sekolah
             L.circleMarker(Peta.latlng(f), {
                 radius: 5, color: '#6b7280', fillOpacity: 0.6,
             }).bindTooltip(Peta.esc(f.properties.nama)).addTo(map);
         });
- 
+
         gambarDaftar();
         map.fitBounds(L.latLngBounds(fitur.map(Peta.latlng)).pad(0.1));
     });

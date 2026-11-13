@@ -219,31 +219,6 @@
             </div>
         </form>
     </div>
-    @push('styles')
-        <style>
-            @keyframes profilShimmer {
-                0% {
-                    background-position: 200% 0
-                }
-
-                100% {
-                    background-position: -200% 0
-                }
-            }
-
-            #profil-edit-skeleton .sk-line {
-                background: linear-gradient(90deg, #E6F0F6 20%, #F7FBFE 45%, #E6F0F6 70%);
-                background-size: 200% 100%;
-                animation: profilShimmer 1.35s linear infinite
-            }
-
-            @media(prefers-reduced-motion:reduce) {
-                #profil-edit-skeleton .sk-line {
-                    animation: none
-                }
-            }
-        </style>
-    @endpush
     @push('scripts')
         <script>
             (function() {

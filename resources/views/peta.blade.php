@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="standalone-map-page">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,462 +9,8 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <style>
-        :root {
-            --primary: #247555;
-            --primary-dark: #1a6048;
-            --background: #f1f5f4;
-            --white: #fff;
-            --text: #192a22;
-            --muted: #68786f;
-            --border: #dfe8e1;
-        }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        html, body {
-            width: 100%;
-            height: 100%;
-        }
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            color: var(--text);
-            background:
-                radial-gradient(ellipse at 10% 0%, rgba(180, 218, 196, .36), transparent 34%),
-                radial-gradient(ellipse at 100% 20%, rgba(199, 210, 254, .32), transparent 38%),
-                linear-gradient(145deg, #f3f7f5, #eef2f8 58%, #f7f8f6);
-            display: flex;
-            flex-direction: column;
-        }
-        .navbar {
-            position: sticky;
-            top: 0;
-            z-index: 1200;
-            width: 100%;
-            min-height: 76px;
-            padding: 12px 24px;
-            display: flex;
-            align-items: center;
-            gap: 22px;
-            overflow: hidden;
-            color: white;
-            background: linear-gradient(110deg, #123e32, #312e81, #0f172a);
-            box-shadow: 0 10px 24px rgba(15, 23, 42, .2);
-        }
-        .header-background-art {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            overflow: hidden;
-            opacity: .1;
-            pointer-events: none;
-        }
-        .header-background-art svg {
-            width: 24rem;
-            height: 24rem;
-            margin-right: -2.5rem;
-            transform: rotate(6deg);
-        }
-        .brand {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            flex: 0 0 auto;
-        }
-        .brand-icon {
-            width: 44px;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid rgba(255, 255, 255, .2);
-            border-radius: 16px;
-            background: rgba(255, 255, 255, .1);
-            color: #b4dac4;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, .12);
-        }
-        .brand-text h1 {
-            color: white;
-            font-size: 18px;
-            font-weight: 700;
-            letter-spacing: -.02em;
-            line-height: 1.2;
-            white-space: nowrap;
-        }
-        .brand-text p {
-            margin-top: 3px;
-            color: rgba(180, 218, 196, .8);
-            font-size: 12px;
-        }
-        .header-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex: 1;
-            min-width: 0;
-            position: relative;
-            z-index: 1;
-        }
-        .search-box {
-            position: relative;
-            flex: 1;
-            min-width: 180px;
-            max-width: 420px;
-        }
-        .search-box > i {
-            position: absolute;
-            top: 50%;
-            left: 14px;
-            transform: translateY(-50%);
-            color: var(--muted);
-            pointer-events: none;
-        }
-        .search-input {
-            width: 100%;
-            height: 42px;
-            padding: 0 15px 0 40px;
-            border: 1px solid var(--border);
-            border-radius: 9px;
-            background: rgba(255, 255, 255, .76);
-            backdrop-filter: blur(12px);
-            color: var(--text);
-            font-size: 13px;
-            outline: none;
-            transition: .2s;
-        }
-        .search-input:focus {
-            border-color: var(--primary);
-            background: rgba(255, 255, 255, .9);
-            backdrop-filter: blur(16px);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, .1);
-        }
-        .rekomendasi-box {
-            position: absolute;
-            top: calc(100% + 8px);
-            left: 0;
-            right: 0;
-            background: rgba(255, 255, 255, .76);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, .15);
-            max-height: 320px;
-            overflow-y: auto;
-            display: none;
-            z-index: 2000;
-        }
-        .rekomendasi-item {
-            padding: 12px 14px;
-            border-bottom: 1px solid #f1f5f9;
-            cursor: pointer;
-            transition: .2s;
-        }
-        .rekomendasi-item:last-child {
-            border-bottom: none;
-        }
-        .rekomendasi-item:hover {
-            background: #eff6ff;
-        }
-        .rekomendasi-nama {
-            font-size: 13px;
-            font-weight: 650;
-            margin-bottom: 5px;
-        }
-        .rekomendasi-info {
-            font-size: 11px;
-            color: var(--muted);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .filter-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-        }
-        .filter-select {
-            height: 42px;
-            min-width: 130px;
-            padding: 0 12px;
-            background: rgba(255, 255, 255, .76);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--border);
-            border-radius: 9px;
-            color: #334155;
-            font-size: 13px;
-            cursor: pointer;
-            outline: none;
-        }
-        .filter-select:focus {
-            border-color: var(--primary);
-        }
-        .btn-reset {
-            height: 42px;
-            padding: 0 14px;
-            border: 1px solid var(--border);
-            border-radius: 9px;
-            background: rgba(255, 255, 255, .84);
-            backdrop-filter: blur(16px);
-            color: #475569;
-            font-size: 13px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 7px;
-            cursor: pointer;
-            transition: .2s;
-        }
-        .btn-reset:hover {
-            background: #f1f5f9;
-        }
-        .btn-admin {
-            height: 42px;
-            padding: 0 15px;
-            background: var(--primary);
-            color: white;
-            border-radius: 9px;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            white-space: nowrap;
-            transition: .2s;
-        }
-        .btn-admin:hover {
-            background: var(--primary-dark);
-        }
-        /* Logout: konsisten dengan tombol navbar */
-        .form-logout {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            align-items: center;
-        }
-        .btn-logout {
-            height: 42px;
-            padding: 0 15px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            background: rgba(239, 68, 68, .15);
-            border: 1px solid rgba(248, 113, 113, .4);
-            border-radius: 9px;
-            color: #fecaca;
-            font-family: inherit;
-            font-size: 13px;
-            font-weight: 600;
-            white-space: nowrap;
-            cursor: pointer;
-            transition: .2s;
-        }
-        .btn-logout:hover {
-            background: #dc2626;
-            border-color: #dc2626;
-            color: white;
-            box-shadow: 0 4px 12px rgba(220, 38, 38, .25);
-        }
-        .btn-logout:active {
-            transform: scale(.98);
-        }
-        .btn-logout:focus-visible {
-            outline: 2px solid #fecaca;
-            outline-offset: 2px;
-        }
-        .btn-logout i {
-            font-size: 16px;
-        }
-        .stat-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 9px 12px;
-            border: 1px solid rgba(255, 255, 255, .18);
-            border-radius: 9px;
-            background: rgba(255, 255, 255, .1);
-            color: white;
-            white-space: nowrap;
-        }
-        .stat-header i {
-            color: #bfdbfe;
-            font-size: 17px;
-        }
-        .stat-header strong {
-            font-size: 14px;
-            color: white;
-        }
-        .stat-header span {
-            font-size: 12px;
-            color: #dbeafe;
-        }
-        .map-container {
-            position: relative;
-            flex: 1;
-            min-height: 0;
-            width: 100%;
-        }
-        #map {
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-        .map-info {
-            position: absolute;
-            left: 20px;
-            top: 20px;
-            z-index: 500;
-            background: rgba(255, 255, 255, .82);
-            backdrop-filter: blur(18px);
-            padding: 13px 17px;
-            border-radius: 11px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, .12);
-            pointer-events: none;
-        }
-        .map-info h3 {
-            font-size: 13px;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-        .map-info h3 i {
-            color: var(--primary);
-            margin-right: 5px;
-        }
-        .map-info p {
-            font-size: 11px;
-            color: var(--muted);
-        }
-        .leaflet-popup-content-wrapper {
-            border-radius: 12px;
-            padding: 4px;
-            background: rgba(255, 255, 255, .9);
-            backdrop-filter: blur(18px);
-        }
-        .leaflet-popup-content {
-            margin: 12px;
-            min-width: 220px;
-        }
-        .popup-title {
-            font-size: 15px;
-            font-weight: 700;
-            margin-bottom: 11px;
-            padding-right: 12px;
-        }
-        .popup-badges {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 14px;
-        }
-        .badge {
-            background: #dbeafe;
-            color: #1d4ed8;
-            font-size: 11px;
-            font-weight: 600;
-            padding: 5px 9px;
-            border-radius: 6px;
-        }
-        .badge-status {
-            background: #dcfce7;
-            color: #15803d;
-        }
-        .popup-row {
-            display: flex;
-            align-items: flex-start;
-            gap: 9px;
-            font-size: 12px;
-            line-height: 1.5;
-            margin-bottom: 10px;
-        }
-        .popup-row i {
-            color: var(--primary);
-            font-size: 14px;
-        }
-        .popup-row span {
-            color: #475569;
-        }
-        @media (max-width: 1250px) {
-            .navbar {
-                gap: 15px;
-                padding: 12px 16px;
-            }
-            .brand-text p {
-                display: none;
-            }
-            .filter-select {
-                min-width: 110px;
-            }
-            .btn-reset span {
-                display: none;
-            }
-        }
-        @media (max-width: 1000px) {
-            .navbar {
-                flex-wrap: wrap;
-                gap: 12px;
-            }
-            .brand {
-                width: 100%;
-            }
-            .header-controls {
-                width: 100%;
-                flex: auto;
-            }
-            .search-box {
-                max-width: none;
-            }
-        }
-        @media (max-width: 650px) {
-            .navbar {
-                padding: 10px 12px;
-            }
-            .brand-icon {
-                width: 36px;
-                height: 36px;
-            }
-            .brand-text h1 {
-                font-size: 15px;
-            }
-            .header-controls {
-                flex-wrap: wrap;
-            }
-            .search-box {
-                flex: 1 1 100%;
-                max-width: none;
-            }
-            .filter-wrapper {
-                flex: 1;
-            }
-            .filter-select {
-                flex: 1;
-                min-width: 0;
-                width: 50%;
-            }
-            .stat-header {
-                flex: 1;
-                justify-content: center;
-            }
-            .map-info {
-                top: 12px;
-                left: 12px;
-                padding: 10px 12px;
-            }
-            .map-info h3 {
-                font-size: 12px;
-            }
-            .map-info p {
-                font-size: 10px;
-            }
-        }
-    </style>
+    @vite(['resources/css/app.css'])
+
 </head>
 <body>
     <header class="navbar">
@@ -657,45 +203,16 @@
                         <img
                             src="${aman(p.logo)}"
                             alt="Logo ${aman(p.nama || 'Sekolah')}"
-                            style="
-                                width:80px;
-                                height:80px;
-                                object-fit:contain;
-                                border-radius:12px;
-                                border:1px solid #e2e8f0;
-                                padding:6px;
-                                background:white;
-                                flex-shrink:0;
-                            "
                             onerror="
-                                this.style.display='none';
-                                this.nextElementSibling.style.display='flex';
+                                this.hidden = true;
+                                this.nextElementSibling.hidden = false;
                             "
+                            class="school-popup-logo"
                         >
-                        <div style="
-                            display:none;
-                            width:80px;
-                            height:80px;
-                            align-items:center;
-                            justify-content:center;
-                            background:#eff6ff;
-                            border-radius:12px;
-                            font-size:32px;
-                            flex-shrink:0;
-                        ">🏫</div>
+                        <div class="school-popup-logo-fallback" hidden>🏫</div>
                     `
                     : `
-                        <div style="
-                            display:flex;
-                            width:80px;
-                            height:80px;
-                            align-items:center;
-                            justify-content:center;
-                            background:#eff6ff;
-                            border-radius:12px;
-                            font-size:32px;
-                            flex-shrink:0;
-                        ">🏫</div>
+                        <div class="school-popup-logo-fallback">🏫</div>
                     `;
 
                 // Tombol profil publik
@@ -703,23 +220,7 @@
                     ? `
                         <a
                             href="${aman(urlProfil)}"
-                            style="
-                                display:flex;
-                                align-items:center;
-                                justify-content:center;
-                                gap:8px;
-                                width:100%;
-                                box-sizing:border-box;
-                                padding:12px;
-                                border-radius:9px;
-                                background:#2563eb;
-                                color:#ffffff;
-                                font-size:13px;
-                                font-weight:600;
-                                text-decoration:none;
-                                cursor:pointer;
-                                margin-top:12px;
-                            "
+                            class="school-popup-profile-link"
                         >
                             <i class="bi bi-building"></i>
                             Lihat Profil Publik
@@ -727,52 +228,22 @@
                         </a>
                     `
                     : `
-                        <div style="
-                            margin-top:12px;
-                            padding:10px;
-                            background:#f1f5f9;
-                            color:#64748b;
-                            border-radius:8px;
-                            font-size:12px;
-                            text-align:center;
-                        ">
+                        <div class="school-popup-profile-unavailable">
                             Profil publik belum tersedia
                         </div>
                     `;
 
                 // Tampilan popup sekolah
                 const popup = `
-                    <div style="
-                        width:270px;
-                        max-width:100%;
-                        font-family:system-ui,sans-serif;
-                        color:#0f172a;
-                    ">
+                    <div class="school-popup">
                         <!-- Header sekolah -->
-                        <div style="
-                            display:flex;
-                            align-items:center;
-                            gap:12px;
-                            padding-bottom:14px;
-                            margin-bottom:14px;
-                            border-bottom:1px solid #e2e8f0;
-                        ">
+                        <div class="school-popup-header">
                             ${logo}
-                            <div style="min-width:0;flex:1;">
-                                <h3 style="
-                                    font-size:15px;
-                                    font-weight:700;
-                                    line-height:1.4;
-                                    margin:0 0 8px;
-                                    overflow-wrap:anywhere;
-                                ">
+                            <div class="school-popup-header-content">
+                                <h3 class="school-popup-title">
                                     ${aman(p.nama || 'Tanpa Nama')}
                                 </h3>
-                                <div style="
-                                    display:flex;
-                                    gap:5px;
-                                    flex-wrap:wrap;
-                                ">
+                                <div class="school-popup-badges">
                                     <span class="badge">
                                         ${aman(p.jenjang || '-')}
                                     </span>
@@ -814,14 +285,7 @@
                         </div>
 
                         <!-- Profil sekolah -->
-                        <div style="
-                            border-top:1px solid #e2e8f0;
-                            margin:12px 0;
-                            padding-top:12px;
-                            font-size:12px;
-                            font-weight:700;
-                            color:#2563eb;
-                        ">
+                        <div class="school-popup-section">
                             Profil Sekolah
                         </div>
                         <div class="popup-row">
@@ -854,16 +318,8 @@
                         </div>
 
                         <!-- Koordinat sekolah -->
-                        <div style="
-                            border-top:1px solid #e2e8f0;
-                            padding-top:12px;
-                            margin-top:12px;
-                        ">
-                            <div style="
-                                font-size:11px;
-                                color:#64748b;
-                                margin-bottom:8px;
-                            ">
+                        <div class="school-popup-coordinate-section">
+                            <div class="school-popup-coordinate-label">
                                 <i class="bi bi-crosshair"></i>
                                 Koordinat:
                                 ${lat.toFixed(6)}, ${lng.toFixed(6)}

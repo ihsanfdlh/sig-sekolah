@@ -1,48 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Profil ' . $sekolah->nama)
 @section('content')
-    <style>
-        #profil-skeleton {
-            position: absolute;
-            inset: 0;
-            z-index: 50;
-            pointer-events: none;
-            opacity: 1;
-            transition: opacity .4s ease
-        }
 
-        #profil-skeleton.is-hidden {
-            opacity: 0
-        }
-
-        #profil-skeleton .sk-block {
-            position: absolute;
-            overflow: hidden;
-            border-radius: 10px;
-            background: #DFEAF1
-        }
-
-        #profil-skeleton .sk-block::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            transform: translateX(-100%);
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .75), transparent);
-            animation: profil-shimmer 1.25s infinite
-        }
-
-        @@keyframes profil-shimmer {
-            100% {
-                transform: translateX(100%)
-            }
-        }
-
-        @@media(prefers-reduced-motion:reduce) {
-            #profil-skeleton .sk-block::after {
-                animation: none
-            }
-        }
-    </style>
     @php
         $profil = $sekolah->profil;
         $logo = $profil?->logo ? asset('storage/' . ltrim($profil->logo, '/')) : null;

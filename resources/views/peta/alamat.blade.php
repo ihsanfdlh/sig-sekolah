@@ -1,48 +1,7 @@
 @extends('layouts.public')
 @section('title', 'Cek Lokasi')
+@section('page-style-class', 'location-page')
 
-@push('styles')
-    <style>
-        .peta-container {
-            position: relative;
-        }
-
-        .btn-lokasi {
-            position: absolute;
-            top: 15px;
-            left: 60px;
-            z-index: 1000;
-
-            display: flex;
-            align-items: center;
-            gap: 8px;
-
-            padding: 10px 14px;
-            background: #ffffff;
-            color: #374151;
-
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-
-            font-size: 13px;
-            font-weight: 600;
-            font-family: inherit;
-
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .btn-lokasi:hover {
-            background: #f3f4f6;
-        }
-
-        .btn-lokasi:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-    </style>
-@endpush
 
 @section('content')
     <div class="toolbar">
@@ -55,9 +14,7 @@
         </button>
     </div>
 
-    <div id="hasil" class="panel"
-        style="top: 64px; right: 12px; width: 320px; max-height: 70%;
-            overflow: auto; display: none;"></div>
+    <div id="hasil" class="panel location-results-panel" hidden></div>
 @endsection
 
 @push('scripts')
@@ -191,7 +148,7 @@
                 }).addTo(lapisan);
             });
 
-            panel.style.display = 'block';
+            panel.hidden = false;
             panel.textContent = 'Mencari alamat...';
 
             let bagianAlamat = '<em>Alamat tidak dapat dimuat.</em>';
@@ -207,13 +164,13 @@
                     ['Kode pos', a.postcode],
                 ].map(([k, v]) => `
                 <tr>
-                    <td style="padding: 2px 8px 2px 0; color: #6b7280;">${k}</td>
+                    <td class="address-detail-label">${k}</td>
                     <td>${Peta.esc(v) || '-'}</td>
                 </tr>`).join('');
 
                 bagianAlamat = `
-                <p style="margin: 6px 0;">${Peta.esc(data.display_name || '-')}</p>
-                <table style="font-size: 13px;">${baris}</table>`;
+                <p class="address-display-name">${Peta.esc(data.display_name || '-')}</p>
+                <table class="address-detail-table">${baris}</table>`;
             } catch (err) {
                 console.error(err);
             }
@@ -262,33 +219,25 @@
             }
 
             const daftar = dekat.map((d) => `
-            <li data-npsn="${Peta.esc(d.fitur.properties.npsn)}"
-                style="padding: 6px 0; border-top: 1px solid #e5e7eb; cursor: pointer;">
+            <li class="nearby-school-item" data-npsn="${Peta.esc(d.fitur.properties.npsn)}">
                 <strong>${Peta.esc(d.fitur.properties.nama)}</strong><br>
                 <small>${d.jarak.toFixed(2)} km (garis lurus)</small>
             </li>`).join('');
 
             panel.innerHTML = `
             <strong>Analisis Jangkauan 1 KM</strong>
-            <div style="
-                padding: 10px;
-                margin: 8px 0 12px;
-                background: #eff6ff;
-                border: 1px solid #bfdbfe;
-                border-radius: 8px;
-                color: #1d4ed8;
-            ">
+            <div class="radius-summary">
                 <strong>${sekolahRadius.length} sekolah</strong>
-                <div style="font-size: 12px; margin-top: 4px;">
+                <div class="radius-summary-description">
                     Berada dalam radius 1 km dari titik yang dipilih.
                 </div>
             </div>
             <strong>Koordinat</strong>
-            <div style="font-family: monospace;">${lat.toFixed(6)}, ${lng.toFixed(6)}</div>
-            <strong style="display: block; margin-top: 8px;">Alamat</strong>
+            <div class="location-coordinates">${lat.toFixed(6)}, ${lng.toFixed(6)}</div>
+            <strong class="location-section-title">Alamat</strong>
             ${bagianAlamat}
-            <strong style="display: block; margin-top: 8px;">Sekolah terdekat</strong>
-            <ul style="list-style: none; margin: 4px 0 0; padding: 0;">${daftar}</ul>`;
+            <strong class="location-section-title">Sekolah terdekat</strong>
+            <ul class="nearby-school-list">${daftar}</ul>`;
         }
 
         map.on('click', cekLokasi);

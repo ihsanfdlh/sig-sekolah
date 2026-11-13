@@ -1,5 +1,6 @@
 @extends('layouts.public')
 @section('title', 'Klaster')
+@section('page-style-class', 'cluster-page')
 
 @push('styles')
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css">
@@ -25,7 +26,7 @@
             </select>
         </label>
         <span id="jumlah"></span>
-        <span style="color: #6b7280;">
+        <span class="cluster-hint">
             Klik angka pada klaster untuk memperbesar peta.
         </span>
     </div>

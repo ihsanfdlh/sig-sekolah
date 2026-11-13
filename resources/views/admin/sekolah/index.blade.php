@@ -14,48 +14,7 @@
             'Negeri' => 'bg-sky-50 text-sky-700 border-sky-200',
         ];
     @endphp
-    <style>
-        @keyframes schoolShimmer {
-            100% {
-                transform: translateX(100%)
-            }
-        }
 
-        .school-skeleton-shimmer {
-            position: relative;
-            overflow: hidden;
-            background: #e6f0f6
-        }
-
-        .school-skeleton-shimmer::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            transform: translateX(-100%);
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .8), transparent);
-            animation: schoolShimmer 1.3s infinite
-        }
-
-        #school-page-skeleton {
-            transition: opacity .4s ease, visibility .4s ease
-        }
-
-        #school-page-skeleton.school-skeleton-hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none
-        }
-
-        @media(prefers-reduced-motion:reduce) {
-            .school-skeleton-shimmer::after {
-                animation: none
-            }
-
-            #school-page-skeleton {
-                transition: none
-            }
-        }
-    </style>
     <div class="relative mx-auto w-full max-w-7xl pb-10" id="school-page-root" aria-busy="true">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
             <div>

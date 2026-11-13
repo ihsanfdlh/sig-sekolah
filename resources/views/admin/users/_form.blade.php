@@ -2,13 +2,7 @@
     $cls = 'block w-full rounded-xl border border-[#D4E3EB] bg-[#F8FBFD] px-4 py-2.5 text-sm text-[#294B63] outline-none transition focus:border-[#79A7BF] focus:ring-2 focus:ring-[#DCECF5]';
 @endphp
 <div class="w-full overflow-hidden relative rounded-2xl border border-[#D6E5ED] bg-white/90 shadow-[0_18px_55px_rgba(41,75,99,0.09)] backdrop-blur-xl">
-<style>
-@keyframes sigFormShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.sig-form-skeleton{position:absolute;inset:0;z-index:30;background:#F7FAFC;border-radius:1rem;overflow:hidden;pointer-events:auto;transition:opacity .4s ease,visibility .4s ease}
-.sig-form-skeleton.is-hidden{opacity:0;visibility:hidden;pointer-events:none}
-.sig-form-skeleton-line{display:block;border-radius:10px;background:linear-gradient(100deg,#E2EDF4 15%,#F7FBFE 40%,#E2EDF4 65%);background-size:200% 100%;animation:sigFormShimmer 1.25s linear infinite}
-@media(prefers-reduced-motion:reduce){.sig-form-skeleton-line{animation:none}.sig-form-skeleton{transition:none}}
-</style>
+
 <div class="sig-form-skeleton" data-sig-form-skeleton aria-hidden="true">
 <div class="border-b border-[#D6E5ED] px-5 py-5 sm:px-7"><span class="sig-form-skeleton-line h-6 w-48"></span><span class="sig-form-skeleton-line mt-3 h-4 w-3/4 max-w-96"></span></div>
 <div class="space-y-7 p-5 sm:p-7">

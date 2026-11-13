@@ -1,15 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Dashboard')
 @section('content')
-<style>
-.dashboard-sky{--sky:#5F91AC;--sky-dark:#294B63;--sky-soft:#EAF4FA;position:relative}
-.dashboard-sky .dashboard-panel{background:rgba(255,255,255,.88);border:1px solid #D6E5ED;box-shadow:0 12px 35px rgba(41,75,99,.07);border-radius:20px;backdrop-filter:blur(12px)}
-.dashboard-sky .dashboard-skeleton{position:absolute;inset:0;z-index:20;background:#F7FAFC;transition:opacity .35s ease,visibility .35s ease;pointer-events:none}
-.dashboard-sky .dashboard-skeleton.is-hidden{opacity:0;visibility:hidden}
-.dashboard-sky .skeleton-bar{background:linear-gradient(100deg,#E1EBF1 15%,#F8FCFE 40%,#E1EBF1 65%);background-size:220% 100%;animation:dashboard-shimmer 1.35s linear infinite;border-radius:9px}
-@keyframes dashboard-shimmer{to{background-position-x:-220%}}
-@media(prefers-reduced-motion:reduce){.dashboard-sky .skeleton-bar{animation:none}.dashboard-sky .dashboard-skeleton{transition:none}}
-</style>
+
 <div class="dashboard-sky mx-auto w-full max-w-7xl" id="dashboard-sky">
     <div class="mb-7 flex flex-wrap items-center justify-between gap-4">
         <div>

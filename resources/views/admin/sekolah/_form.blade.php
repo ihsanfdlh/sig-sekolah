@@ -166,11 +166,7 @@ border-red-500
 </div>
 </div>
 </div>
-<style>
-@keyframes schoolFormShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.school-skeleton-shimmer{background:linear-gradient(100deg,#E4EEF4 20%,#F8FCFF 40%,#E4EEF4 60%);background-size:200% 100%;animation:schoolFormShimmer 1.5s linear infinite}
-@media(prefers-reduced-motion:reduce){.school-skeleton-shimmer{animation:none}}
-</style>
+
 @push('scripts')
 <script>
 (function(){
@@ -213,12 +209,12 @@ setTimeout(hide,8000);
             const sudahAda = valid(latAwal, lngAwal);
             const pusat = sudahAda ? [latAwal, lngAwal] : [-1.8374614675638135, 115.63343545771596];
             const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
+                maxZoom: 18,
                 attribution: '&copy; OpenStreetMap contributors'
             });
             const satelit = L.tileLayer(
                 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-                    maxZoom: 19,
+                    maxZoom: 18,
                     attribution: 'Tiles &copy; Esri'
                 }
             );

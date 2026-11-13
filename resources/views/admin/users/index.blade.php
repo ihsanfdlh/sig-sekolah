@@ -1,29 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Pengguna')
 @section('content')
-    <style>
-        @keyframes userSkeletonShimmer {
-            0% {
-                background-position: 200% 0
-            }
 
-            100% {
-                background-position: -200% 0
-            }
-        }
-
-        .user-skeleton-shimmer {
-            background: linear-gradient(100deg, #e4eef5 20%, #f8fbfd 40%, #e4eef5 60%);
-            background-size: 200% 100%;
-            animation: userSkeletonShimmer 1.35s linear infinite
-        }
-
-        @media(prefers-reduced-motion:reduce) {
-            .user-skeleton-shimmer {
-                animation: none
-            }
-        }
-    </style>
     <div id="users-page" class="relative mx-auto max-w-7xl space-y-6 text-[#294B63]">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>

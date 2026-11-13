@@ -1,5 +1,6 @@
 @extends('layouts.public')
 @section('title', 'Peta Panas')
+@section('page-style-class', 'heat-page')
 
 @section('content')
     <div class="toolbar">
@@ -26,14 +27,9 @@
 
     <div id="peta" class="peta"></div>
 
-    <div class="panel" style="left: 12px; bottom: 24px; width: 180px;">
-        <div
-            style="height: 10px; border-radius: 5px;
-        background: linear-gradient(to right, #2563eb, #06b6d4, #84cc16,
-                                    #facc15, #dc2626);">
-        </div>
-        <div style="display: flex; justify-content: space-between;
-                font-size: 12px; margin-top: 4px;">
+    <div class="panel heat-legend">
+        <div class="heat-legend-scale"></div>
+        <div class="heat-legend-labels">
             <span>Rendah</span><span>Tinggi</span>
         </div>
     </div>
