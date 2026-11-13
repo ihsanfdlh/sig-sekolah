@@ -29,7 +29,6 @@ Route::controller(PetaController::class)->group(function () {
     Route::get('/peta/gabungan', [PetaController::class, 'gabungan'])->name('peta.gabungan');
 });
 
-
 Route::get('/data/sekolah', [PetaController::class, 'geojson'])
     ->name('peta.data');
 
