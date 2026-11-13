@@ -53,25 +53,25 @@ map.eachLayer(function(layer) {
 const baseLayers = {
     'Jalanan (OpenStreetMap)': L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors',
-        maxZoom: 19
+        maxZoom: 18
     }),
     'Satelit (Esri)': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         attribution: '&copy; Esri',
-        maxZoom: 19
+        maxZoom: 18
     }),
     'Satelit + Nama Lokasi': L.layerGroup([
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             attribution: '&copy; Esri',
-            maxZoom: 19
+            maxZoom: 18
         }),
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
             attribution: '&copy; Esri',
-            maxZoom: 19
+            maxZoom: 18
         })
     ]),
     'Topografi (Esri)': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
         attribution: '&copy; Esri',
-        maxZoom: 19
+        maxZoom: 18
     })
 };
 baseLayers['Jalanan (OpenStreetMap)'].addTo(map);
