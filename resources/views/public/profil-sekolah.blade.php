@@ -31,13 +31,13 @@
             animation: profil-shimmer 1.25s infinite
         }
 
-        @keyframes profil-shimmer {
+        @@keyframes profil-shimmer {
             100% {
                 transform: translateX(100%)
             }
         }
 
-        @media(prefers-reduced-motion:reduce) {
+        @@media(prefers-reduced-motion:reduce) {
             #profil-skeleton .sk-block::after {
                 animation: none
             }
@@ -45,7 +45,7 @@
     </style>
     @php
         $profil = $sekolah->profil;
-        $logo = $profil?->logo ? \Illuminate\Support\Facades\Storage::disk('public')->url($profil->logo) : null;
+        $logo = $profil?->logo ? asset('storage/' . ltrim($profil->logo, '/')) : null;
         $tutWuri = asset('storage/Assets/tut-wuri-handayani.png');
         $informasi = [
             'NPSN' => $sekolah->npsn,
@@ -72,7 +72,7 @@
     <div id="profil-sekolah-content" class="relative mx-auto w-full max-w-6xl space-y-6 pb-12">
         {{-- Navigasi --}}
         <div class="flex flex-wrap items-center justify-between gap-3">
-            <a href="{{ route('peta.index') }}"
+            <a href="{{ url('/') }}"
                 class="inline-flex items-center gap-2 text-sm font-medium text-slate-600 transition hover:text-[#416D86]">
                 <span aria-hidden="true">&larr;</span>
                 Kembali ke Peta
@@ -344,7 +344,7 @@
             <p class="text-xs text-slate-500">
                 Informasi profil dikelola oleh pihak sekolah.
             </p>
-            <a href="{{ route('peta.index') }}" class="text-sm font-semibold text-[#416D86] transition hover:underline">
+            <a href="{{ url('/') }}" class="text-sm font-semibold text-[#416D86] transition hover:underline">
                 Kembali ke Peta
             </a>
         </div>
