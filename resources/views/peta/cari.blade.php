@@ -14,7 +14,7 @@
         <option value="SMK">SMK</option>
     </select>
     <button id="hapus" type="button">Hapus</button>
-    <button id="buka-hasil" type="button" aria-controls="panel-hasil" aria-expanded="false" hidden>
+    <button id="buka-hasil" type="button" aria-controls="panel-hasil" aria-expanded="true" hidden>
         <i class="bi bi-list-ul"></i>
         Hasil Pencarian
     </button>
@@ -27,11 +27,13 @@
         <span>Memuat data sekolah...</span>
     </div>
 </div>
-<div id="panel-hasil" class="panel">
+<div id="panel-hasil" class="panel" aria-hidden="false">
     <div class="panel-hasil-header">
         <strong>Hasil Pencarian</strong>
         <button type="button" id="tutup-hasil" title="Tutup hasil pencarian" aria-label="Tutup hasil pencarian">
-            <i class="bi bi-x-lg"></i>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" class="h-4 w-4">
+                <path d="M18 6 6 18M6 6l12 12"/>
+            </svg>
         </button>
     </div>
     <ul id="hasil"></ul>
@@ -89,10 +91,39 @@ const tombolBuka = document.getElementById('buka-hasil');
 const daftarHasil = document.getElementById('hasil');
 let semua = [];
 let tunda = null;
+let timerPanelHasil = null;
+const durasiAnimasiPanel = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 180;
 function aturPanelHasil(terbuka) {
-    panelHasil.hidden = !terbuka;
+    clearTimeout(timerPanelHasil);
     tombolBuka.hidden = terbuka;
     tombolBuka.setAttribute('aria-expanded', String(terbuka));
+    panelHasil.setAttribute('aria-hidden', String(!terbuka));
+    panelHasil.classList.remove('is-opening', 'is-closing');
+    panelHasil.hidden = false;
+
+    if (terbuka) {
+        tombolTutup.focus();
+        if (durasiAnimasiPanel > 0) {
+            panelHasil.classList.add('is-opening');
+            timerPanelHasil = setTimeout(function() {
+                panelHasil.classList.remove('is-opening');
+            }, durasiAnimasiPanel);
+        }
+
+        return;
+    }
+
+    tombolBuka.focus();
+    if (durasiAnimasiPanel === 0) {
+        panelHasil.hidden = true;
+        return;
+    }
+
+    panelHasil.classList.add('is-closing');
+    timerPanelHasil = setTimeout(function() {
+        panelHasil.hidden = true;
+        panelHasil.classList.remove('is-closing');
+    }, durasiAnimasiPanel);
 }
 tombolTutup.addEventListener('click', function() {
     aturPanelHasil(false);

@@ -1072,6 +1072,39 @@ html.public-page.search-page #panel-hasil {
     overflow-y: auto;
 }
 
+html.public-page.search-page #panel-hasil.is-opening {
+    animation: search-results-enter .18s cubic-bezier(.2, .8, .2, 1) both;
+}
+
+html.public-page.search-page #panel-hasil.is-closing {
+    animation: search-results-exit .18s ease-in both;
+    pointer-events: none;
+}
+
+@keyframes search-results-enter {
+    from {
+        opacity: 0;
+        transform: translateY(-8px) scale(.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes search-results-exit {
+    from {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(-8px) scale(.98);
+    }
+}
+
 html.public-page.search-page .panel-hasil-header {
     display: flex;
     align-items: center;
@@ -1081,23 +1114,48 @@ html.public-page.search-page .panel-hasil-header {
 }
 
 html.public-page.search-page #tutup-hasil {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 30px;
-    height: 30px;
-    border: none;
-    border-radius: 8px;
-    background: transparent;
-    color: #64748b;
-    font-size: 18px;
+    width: 36px;
+    height: 36px;
+    flex: 0 0 auto;
+    border: 1px solid #D6E5ED;
+    border-radius: 12px;
+    background: linear-gradient(145deg, #FFFFFF, #F0F7FB);
+    color: #5F91AC;
+    font-size: 14px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    box-shadow: 0 3px 9px rgba(41, 75, 99, .08);
+    transition: background-color .18s ease, border-color .18s ease, color .18s ease, box-shadow .18s ease, transform .18s ease;
 }
 
 html.public-page.search-page #tutup-hasil:hover {
-    background: #fee2e2;
-    color: #dc2626;
+    transform: rotate(90deg);
+    border-color: #5F91AC;
+    background: #5F91AC;
+    color: #FFFFFF;
+    box-shadow: 0 6px 14px rgba(95, 145, 172, .24);
+}
+
+html.public-page.search-page #tutup-hasil:focus-visible {
+    outline: 3px solid rgba(95, 145, 172, .28);
+    outline-offset: 2px;
+}
+
+html.public-page.search-page #tutup-hasil:active {
+    transform: scale(.94);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html.public-page.search-page #tutup-hasil {
+        transition: none;
+    }
+
+    html.public-page.search-page #panel-hasil.is-opening,
+    html.public-page.search-page #panel-hasil.is-closing {
+        animation: none;
+    }
 }
 
 html.public-page.search-page #buka-hasil {
