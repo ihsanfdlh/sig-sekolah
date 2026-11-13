@@ -1,32 +1,44 @@
-
 @php
-    $cls = 'block w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-800 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100';
+    $cls = 'block w-full rounded-xl border border-[#D4E3EB] bg-[#F8FBFD] px-4 py-2.5 text-sm text-[#294B63] outline-none transition focus:border-[#79A7BF] focus:ring-2 focus:ring-[#DCECF5]';
 @endphp
-
-<div class="w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+<div class="w-full overflow-hidden relative rounded-2xl border border-[#D6E5ED] bg-white/90 shadow-[0_18px_55px_rgba(41,75,99,0.09)] backdrop-blur-xl">
+<style>
+@keyframes sigFormShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.sig-form-skeleton{position:absolute;inset:0;z-index:30;background:#F7FAFC;border-radius:1rem;overflow:hidden;pointer-events:auto;transition:opacity .4s ease,visibility .4s ease}
+.sig-form-skeleton.is-hidden{opacity:0;visibility:hidden;pointer-events:none}
+.sig-form-skeleton-line{display:block;border-radius:10px;background:linear-gradient(100deg,#E2EDF4 15%,#F7FBFE 40%,#E2EDF4 65%);background-size:200% 100%;animation:sigFormShimmer 1.25s linear infinite}
+@media(prefers-reduced-motion:reduce){.sig-form-skeleton-line{animation:none}.sig-form-skeleton{transition:none}}
+</style>
+<div class="sig-form-skeleton" data-sig-form-skeleton aria-hidden="true">
+<div class="border-b border-[#D6E5ED] px-5 py-5 sm:px-7"><span class="sig-form-skeleton-line h-6 w-48"></span><span class="sig-form-skeleton-line mt-3 h-4 w-3/4 max-w-96"></span></div>
+<div class="space-y-7 p-5 sm:p-7">
+<div><span class="sig-form-skeleton-line h-5 w-44"></span><span class="sig-form-skeleton-line mt-3 h-4 w-3/4 max-w-96"></span><div class="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2"><div><span class="sig-form-skeleton-line h-4 w-20"></span><span class="sig-form-skeleton-line mt-3 h-11 w-full"></span></div><div><span class="sig-form-skeleton-line h-4 w-20"></span><span class="sig-form-skeleton-line mt-3 h-11 w-full"></span></div></div></div>
+<div class="border-t border-[#D6E5ED] pt-6"><span class="sig-form-skeleton-line h-5 w-52"></span><span class="sig-form-skeleton-line mt-3 h-4 w-3/4 max-w-96"></span><div class="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2"><div><span class="sig-form-skeleton-line h-4 w-20"></span><span class="sig-form-skeleton-line mt-3 h-11 w-full"></span></div><div><span class="sig-form-skeleton-line h-4 w-20"></span><span class="sig-form-skeleton-line mt-3 h-11 w-full"></span></div></div></div>
+<div class="border-t border-[#D6E5ED] pt-6"><span class="sig-form-skeleton-line h-5 w-44"></span><span class="sig-form-skeleton-line mt-3 h-4 w-3/4 max-w-96"></span><div class="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2"><div><span class="sig-form-skeleton-line h-4 w-28"></span><span class="sig-form-skeleton-line mt-3 h-11 w-full"></span></div><div><span class="sig-form-skeleton-line h-4 w-28"></span><span class="sig-form-skeleton-line mt-3 h-11 w-full"></span></div></div></div>
+</div>
+<div class="flex justify-end gap-3 border-t border-[#D6E5ED] px-5 py-4"><span class="sig-form-skeleton-line h-10 w-24"></span><span class="sig-form-skeleton-line h-10 w-28"></span></div>
+</div>
     <!-- Header Form -->
-    <div class="border-b border-slate-200 px-5 py-5 sm:px-7">
-        <h2 class="text-lg font-bold text-slate-900">Informasi Pengguna</h2>
-        <p class="mt-1 text-sm text-slate-500">
+    <div class="border-b border-[#D6E5ED] px-5 py-5 sm:px-7">
+        <h2 class="text-lg font-bold text-[#294B63]">Informasi Pengguna</h2>
+        <p class="mt-1 text-sm text-[#71899A]">
             Kelola identitas, hak akses, dan keamanan akun pengguna.
         </p>
     </div>
-
     <!-- Isi Form -->
     <div class="space-y-7 p-5 sm:p-7">
         <!-- Identitas Pengguna -->
         <section>
             <div class="mb-5">
-                <h3 class="text-base font-semibold text-slate-900">Identitas Pengguna</h3>
-                <p class="mt-1 text-sm text-slate-500">
+                <h3 class="text-base font-semibold text-[#294B63]">Identitas Pengguna</h3>
+                <p class="mt-1 text-sm text-[#71899A]">
                     Informasi dasar akun yang digunakan untuk masuk ke sistem.
                 </p>
             </div>
-
             <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
                 <!-- Nama -->
                 <div>
-                    <label for="name" class="mb-2 block text-sm font-semibold text-slate-700">
+                    <label for="name" class="mb-2 block text-sm font-semibold text-[#365C74]">
                         Nama
                     </label>
                     <input type="text" id="name" name="name"
@@ -36,10 +48,9 @@
                         <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
-
                 <!-- Email -->
                 <div>
-                    <label for="email" class="mb-2 block text-sm font-semibold text-slate-700">
+                    <label for="email" class="mb-2 block text-sm font-semibold text-[#365C74]">
                         Email
                     </label>
                     <input type="email" id="email" name="email"
@@ -51,20 +62,18 @@
                 </div>
             </div>
         </section>
-
         <!-- Hak Akses Pengguna -->
-        <section class="border-t border-slate-200 pt-6">
+        <section class="border-t border-[#D6E5ED] pt-6">
             <div class="mb-5">
-                <h3 class="text-base font-semibold text-slate-900">Hak Akses Pengguna</h3>
-                <p class="mt-1 text-sm text-slate-500">
+                <h3 class="text-base font-semibold text-[#294B63]">Hak Akses Pengguna</h3>
+                <p class="mt-1 text-sm text-[#71899A]">
                     Tentukan peran pengguna dan sekolah yang terhubung dengan akun.
                 </p>
             </div>
-
             <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
                 <!-- Role -->
                 <div>
-                    <label for="role" class="mb-2 block text-sm font-semibold text-slate-700">
+                    <label for="role" class="mb-2 block text-sm font-semibold text-[#365C74]">
                         Role
                     </label>
                     <select id="role" name="role"
@@ -80,10 +89,9 @@
                         <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
-
                 <!-- Sekolah -->
                 <div id="blok-sekolah">
-                    <label for="sekolah_id" class="mb-2 block text-sm font-semibold text-slate-700">
+                    <label for="sekolah_id" class="mb-2 block text-sm font-semibold text-[#365C74]">
                         Sekolah
                     </label>
                     <select id="sekolah_id" name="sekolah_id"
@@ -102,33 +110,29 @@
                 </div>
             </div>
         </section>
-
         <!-- Keamanan Akun -->
-        <section class="border-t border-slate-200 pt-6">
+        <section class="border-t border-[#D6E5ED] pt-6">
             <div class="mb-5">
-                <h3 class="text-base font-semibold text-slate-900">Keamanan Akun</h3>
-                <p class="mt-1 text-sm text-slate-500">
+                <h3 class="text-base font-semibold text-[#294B63]">Keamanan Akun</h3>
+                <p class="mt-1 text-sm text-[#71899A]">
                     Atur kata sandi untuk menjaga keamanan akun pengguna.
                 </p>
             </div>
-
             <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
                 <!-- Kata Sandi -->
                 <div>
-                    <label for="password" class="mb-2 block text-sm font-semibold text-slate-700">
+                    <label for="password" class="mb-2 block text-sm font-semibold text-[#365C74]">
                         Kata Sandi
                     </label>
-
                     <div class="relative">
                         <input type="password" id="password" name="password"
                             autocomplete="new-password"
                             class="{{ $cls }} pr-12 @error('password') border-red-500 @enderror">
-
                         <button type="button"
                             data-toggle-password="password"
                             aria-label="Tampilkan kata sandi"
                             aria-pressed="false"
-                            class="absolute inset-y-0 right-0 flex w-12 items-center justify-center text-slate-400 transition hover:text-blue-600 focus:outline-none">
+                            class="absolute inset-y-0 right-0 flex w-12 items-center justify-center text-[#66879B] transition hover:text-[#4D7E99] focus:outline-none">
                             <svg class="h-5 w-5" fill="none" stroke="currentColor"
                                 stroke-width="1.8" stroke-linecap="round"
                                 stroke-linejoin="round" viewBox="0 0 24 24"
@@ -140,36 +144,31 @@
                             </svg>
                         </button>
                     </div>
-
                     @if ($user->exists)
-                        <p class="mt-2 text-xs text-slate-500">
+                        <p class="mt-2 text-xs text-[#71899A]">
                             Kosongkan jika tidak ingin mengganti kata sandi.
                         </p>
                     @endif
-
                     @error('password')
                         <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
-
                 <!-- Ulangi Kata Sandi -->
                 <div>
                     <label for="password_confirmation"
-                        class="mb-2 block text-sm font-semibold text-slate-700">
+                        class="mb-2 block text-sm font-semibold text-[#365C74]">
                         Ulangi Kata Sandi
                     </label>
-
                     <div class="relative">
                         <input type="password" id="password_confirmation"
                             name="password_confirmation"
                             autocomplete="new-password"
                             class="{{ $cls }} pr-12">
-
                         <button type="button"
                             data-toggle-password="password_confirmation"
                             aria-label="Tampilkan konfirmasi kata sandi"
                             aria-pressed="false"
-                            class="absolute inset-y-0 right-0 flex w-12 items-center justify-center text-slate-400 transition hover:text-blue-600 focus:outline-none">
+                            class="absolute inset-y-0 right-0 flex w-12 items-center justify-center text-[#66879B] transition hover:text-[#4D7E99] focus:outline-none">
                             <svg class="h-5 w-5" fill="none" stroke="currentColor"
                                 stroke-width="1.8" stroke-linecap="round"
                                 stroke-linejoin="round" viewBox="0 0 24 24"
@@ -185,16 +184,14 @@
             </div>
         </section>
     </div>
-
     <!-- Footer Form -->
-    <div class="flex flex-wrap items-center justify-end gap-3 border-t border-slate-200 bg-slate-50 px-5 py-4 sm:px-7">
+    <div class="flex flex-wrap items-center justify-end gap-3 border-t border-[#D6E5ED] bg-[#F2F8FC] px-5 py-4 sm:px-7">
         <a href="{{ route('admin.users.index') }}"
-            class="inline-flex h-10 items-center justify-center rounded-lg border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">
+            class="inline-flex h-10 items-center justify-center rounded-lg border border-[#D4E3EB] bg-[#F8FBFD] px-5 text-sm font-semibold text-[#365C74] transition hover:bg-[#E6F0F6]">
             Batal
         </a>
-
         <button type="submit"
-            class="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700">
+            class="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-[#5F91AC] px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-[#4D7E99]">
             <svg width="17" height="17" fill="none" stroke="currentColor"
                 stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -208,14 +205,30 @@
         </button>
     </div>
 </div>
-
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const skeleton = document.querySelector('[data-sig-form-skeleton]');
+    if (skeleton) {
+        const minimumDuration = 1800;
+        const startedAt = performance.now();
+        let hidden = false;
+        const hideSkeleton = () => {
+            if (hidden) return;
+            hidden = true;
+            const remaining = Math.max(0, minimumDuration - (performance.now() - startedAt));
+            setTimeout(() => {
+                skeleton.classList.add('is-hidden');
+                setTimeout(() => skeleton.remove(), 450);
+            }, remaining);
+        };
+        if (document.readyState === 'complete') hideSkeleton();
+        else window.addEventListener('load', hideSkeleton, { once: true });
+        setTimeout(hideSkeleton, 8000);
+    }
     // Menampilkan pilihan sekolah berdasarkan role
     const role = document.getElementById('role');
     const blok = document.getElementById('blok-sekolah');
-
     if (role && blok) {
         function aturBlokSekolah() {
             const isSekolah = role.value === 'sekolah';
@@ -225,28 +238,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 sekolahInput.disabled = !isSekolah;
             }
         }
-
         role.addEventListener('change', aturBlokSekolah);
         aturBlokSekolah();
     }
-
     // Toggle tampil/sembunyikan kata sandi
     document.querySelectorAll('[data-toggle-password]').forEach(function(button) {
         const inputId = button.getAttribute('data-toggle-password');
         const input = document.getElementById(inputId);
-
         if (!input) return;
-
         button.addEventListener('click', function() {
             const tampil = input.type === 'password';
-
             input.type = tampil ? 'text' : 'password';
-
             const garisMata = button.querySelector('.eye-slash');
             if (garisMata) {
                 garisMata.classList.toggle('hidden', !tampil);
             }
-
             button.setAttribute('aria-pressed', String(tampil));
             button.setAttribute(
                 'aria-label',

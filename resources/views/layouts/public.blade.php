@@ -1566,7 +1566,9 @@
 <body>
 
     @php
-        $logoSekolah = asset('storage/Assets/Logo_of_Ministry_of_Education_and_Culture_of_Republic_of_Indonesia.svg.webp');
+        $logoSekolah = asset(
+            'storage/Assets/Logo_of_Ministry_of_Education_and_Culture_of_Republic_of_Indonesia.svg.webp',
+        );
         $menu = [
             'peta.index' => ['Beranda', 'home'],
             'peta.cari' => ['Pencarian', 'search'],

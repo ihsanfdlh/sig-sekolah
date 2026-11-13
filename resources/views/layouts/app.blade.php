@@ -28,15 +28,15 @@
         .edu-nav-link:hover{background:#DDECF5!important;border-color:#C9E1ED}
         .edu-nav-link.is-active{background:#5F91AC!important;color:#FFF!important;border-color:#5F91AC;box-shadow:0 5px 14px rgba(95,145,172,.20)}
         .edu-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;min-width:0}
-        .edu-user{display:flex;align-items:center;gap:9px;padding:5px 10px 5px 5px;border:1px solid #CFDFE9;border-radius:13px;background:rgba(255,255,255,.78);max-width:175px}
-        .edu-avatar{height:36px;width:36px;flex-shrink:0;display:grid;place-items:center;border-radius:9px;background:#B7D3E2;color:#294B63;font-weight:800}
-        .edu-user-name{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:750;color:#294B63}
-        .edu-user-role{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;color:#668398}
+        .edu-user{display:flex;align-items:center;gap:11px;padding:6px 14px 6px 6px;border:1px solid rgba(190,213,226,.9);border-radius:14px;background:rgba(255,255,255,.72);box-shadow:0 5px 18px rgba(41,75,99,.06);backdrop-filter:blur(12px);max-width:205px;min-width:0;transition:background .2s,border-color .2s,box-shadow .2s}.edu-user:hover{background:rgba(255,255,255,.95);border-color:#A3C4D4;box-shadow:0 7px 20px rgba(41,75,99,.10)}
+        .edu-avatar{height:38px;width:38px;flex-shrink:0;display:grid;place-items:center;border-radius:11px;background:linear-gradient(135deg,#5F91AC,#8DB5CA);color:#fff;font-size:15px;font-weight:800;box-shadow:0 3px 10px rgba(95,145,172,.2)}
+        .edu-user-name{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:800;color:#294B63;line-height:1.4}
+        .edu-user-role{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;color:#668398;line-height:1.5}
         .edu-login,.edu-logout{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;padding:0 17px;border-radius:11px;font-size:13px;font-weight:750;text-decoration:none!important;white-space:nowrap;cursor:pointer;transition:background .2s}
         .edu-login{background:#5F91AC!important;color:#FFF!important;border:1px solid #5F91AC}
         .edu-login:hover{background:#4B7D98!important}
-        .edu-logout{background:#FFF4F3!important;color:#A45F5A!important;border:1px solid #EBD2CF}
-        .edu-logout:hover{background:#FCE6E4!important}
+        .edu-logout{background:rgba(255,255,255,.7)!important;color:#416D86!important;border:1px solid #C9DEE9;box-shadow:0 4px 14px rgba(41,75,99,.05);backdrop-filter:blur(12px);transition:background .2s,color .2s,border-color .2s,transform .2s}
+        .edu-logout:hover{background:#E1EFF6!important;color:#294B63!important;border-color:#A3C4D4;transform:translateY(-1px)}.edu-logout:focus-visible{outline:3px solid rgba(95,145,172,.28);outline-offset:2px}.edu-logout:active{transform:translateY(0)}
         .edu-login svg,.edu-logout svg{width:17px;height:17px}
         .edu-toggle{display:none;align-items:center;justify-content:center;height:42px;width:42px;border:1px solid #C9DEE9;border-radius:11px;background:#FFF!important;color:#294B63!important;cursor:pointer}
         .edu-mobile{background:#F0F7FB!important;border-top:1px solid #D6E5ED;padding:12px 20px 18px}
@@ -46,7 +46,7 @@
         .edu-mobile svg{width:18px;height:18px}
         @media(max-width:1500px){.edu-header-inner{grid-template-columns:minmax(250px,1fr) auto auto;gap:12px;padding:12px 24px}.edu-nav-link{padding:0 9px;gap:6px;font-size:12px}.edu-brand-name{font-size:23px}.edu-brand-logo{height:55px;width:55px}}
         @media(max-width:1230px){.edu-header-inner{grid-template-columns:1fr auto;min-height:82px}.edu-nav{display:none}.edu-toggle{display:inline-flex}.edu-brand-name{font-size:22px}}
-        @media(max-width:640px){.edu-header-inner{padding:10px 14px;min-height:72px;gap:8px}.edu-brand{gap:9px}.edu-brand-logo{width:42px;height:42px}.edu-brand-divider{height:36px}.edu-brand-name{font-size:17px}.edu-brand-description{display:none}.edu-user{display:none}.edu-login,.edu-logout{padding:0 10px;min-height:38px;font-size:12px}.edu-toggle{height:38px;width:38px}.edu-header-watermark img{height:130px;width:130px}}
+        @media(max-width:640px){.edu-header-inner{padding:10px 14px;min-height:72px;gap:8px}.edu-brand{gap:9px}.edu-brand-logo{width:42px;height:42px}.edu-brand-divider{height:36px}.edu-brand-name{font-size:17px}.edu-brand-description{display:none}.edu-user{display:flex;max-width:48px;padding:4px;border-radius:12px}.edu-user .min-w-0{display:none}.edu-avatar{height:34px;width:34px}.edu-actions{gap:6px}.edu-logout{gap:5px;padding:0 9px}.edu-login,.edu-logout{padding:0 10px;min-height:38px;font-size:12px}.edu-toggle{height:38px;width:38px}.edu-header-watermark img{height:130px;width:130px}}
     </style>
     @stack('styles')
 </head>
@@ -101,7 +101,7 @@
             <div class="edu-actions">
                 @auth
                     <div class="edu-user"><span class="edu-avatar">{{ strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}</span><span class="min-w-0"><strong class="edu-user-name">{{ auth()->user()->name }}</strong><small class="edu-user-role">{{ auth()->user()->roleLabel() }}</small></span></div>
-                    <form method="POST" action="{{ route('logout') }}">@csrf<button type="submit" class="edu-logout">Keluar</button></form>
+                    <form method="POST" action="{{ route('logout') }}">@csrf<button type="submit" class="edu-logout" aria-label="Keluar dari akun"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M12 3h6a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3h-6"/></svg><span>Keluar</span></button></form>
                 @else
                     <a href="{{ route('login') }}" class="edu-login"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a6 6 0 0 0-12 0v2M14 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/></svg>Masuk</a>
                 @endauth

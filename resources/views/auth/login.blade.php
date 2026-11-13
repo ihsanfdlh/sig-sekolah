@@ -451,12 +451,22 @@
             html, body.auth-muted-sky { height: auto; overflow-x: hidden; overflow-y: auto; }
         }
     </style>
+<style id="login-skeleton-css">
+#login-skeleton-overlay{position:fixed;inset:0;z-index:99999;pointer-events:none;background:linear-gradient(125deg,#F7FAFC 0%,#EAF4FA 52%,#F3F8FB 100%);opacity:1;visibility:visible;transition:opacity .3s ease,visibility .3s ease}
+#login-skeleton-overlay.is-done{opacity:0;visibility:hidden}
+#login-skeleton-overlay .login-sk-block{position:absolute;box-sizing:border-box;border-radius:9px;background:#dce9f1;overflow:hidden}
+#login-skeleton-overlay .login-sk-block::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.8),transparent);animation:login-sk-shimmer 1.35s linear infinite}
+#login-skeleton-overlay .login-sk-card{position:absolute;box-sizing:border-box;border:1px solid #dce8ef;border-radius:23px;background:rgba(255,255,255,.89);box-shadow:0 24px 65px rgba(41,75,99,.11)}
+@keyframes login-sk-shimmer{100%{transform:translateX(100%)}}
+@media(prefers-reduced-motion:reduce){#login-skeleton-overlay .login-sk-block::after{animation:none}}
+</style>
 </head>
 <body class="auth-muted-sky">
+<div id="login-skeleton-overlay" aria-hidden="true"></div>
     <div class="login-scene" aria-hidden="true">
         <img class="scene-logo" src="{{ asset('storage/Assets/tut-wuri-handayani.png') }}" alt="">
         <svg class="scene-waves" viewBox="0 0 1440 260" preserveAspectRatio="none" fill="none"
-            xmlns="http\://www.w3.org/2000/svg">
+            xmlns="http\\://www.w3.org/2000/svg">
             <path d="M0 125C200 205 390 210 605 143C800 81 925 60 1110 129C1250 181 1350 100 1440 71V260H0V125Z"
                 fill="#D6EAF4" fill-opacity=".65" />
             <path d="M0 194C225 238 398 225 611 171C824 117 1032 208 1200 172C1304 150 1382 115 1440 121V260H0V194Z"
@@ -532,5 +542,42 @@
             });
         });
     </script>
+<script id="login-skeleton-js">
+(function(){
+const overlay=document.getElementById('login-skeleton-overlay');
+if(!overlay)return;
+let closed=false;
+function block(element,options={}){
+if(!element||!element.getClientRects().length)return;
+const r=element.getBoundingClientRect();
+if(r.width<2||r.height<2||r.bottom<0||r.top>innerHeight)return;
+const el=document.createElement('div');
+el.className=options.card?'login-sk-card':'login-sk-block';
+el.style.left=Math.max(0,r.left)+'px';
+el.style.top=Math.max(0,r.top)+'px';
+el.style.width=Math.max(0,Math.min(r.right,innerWidth)-Math.max(0,r.left))+'px';
+el.style.height=Math.max(0,Math.min(r.bottom,innerHeight)-Math.max(0,r.top))+'px';
+if(options.radius)el.style.borderRadius=options.radius;
+overlay.appendChild(el);
+}
+function draw(){
+if(closed)return;
+overlay.replaceChildren();
+block(document.querySelector('.login-card'),{card:true});
+const items=['.login-brand img','.login-brand strong','.login-brand small','.topbar-back','.welcome-badge','.login-welcome h1','.login-welcome p','.welcome-note svg','.welcome-note span','.card-icon','.login-card h2','.card-desc','.field-label','.login-input','.toggle-password','.remember-row','.login-submit','.card-bottom a'];
+items.forEach(selector=>document.querySelectorAll(selector).forEach(el=>block(el,{radius:el.matches('.login-brand img,.card-icon')?'13px':null})));
+}
+function close(){
+if(closed)return;
+closed=true;
+overlay.classList.add('is-done');
+setTimeout(()=>overlay.remove(),350);
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',draw,{once:true});else draw();
+window.addEventListener('load',close,{once:true});
+window.addEventListener('pageshow',event=>{if(event.persisted)close()});
+setTimeout(close,8000);
+})();
+</script>
 </body>
 </html>
