@@ -7,6 +7,6 @@ class ProfilPublikController extends Controller
     public function show(Sekolah $sekolah): View
     {
         $sekolah->load('profil');
-        return view('public.profil-sekolah-test', compact('sekolah'));
+        return view('public.profil-sekolah', compact('sekolah'));
     }
 }
