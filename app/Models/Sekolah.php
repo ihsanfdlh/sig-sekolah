@@ -3,27 +3,32 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Foundation\Auth\User;
-
 class Sekolah extends Model
 {
     protected $fillable = [
-        'npsn', 'nama', 'jenjang', 'status', 'alamat',
-        'kecamatan', 'telepon', 'latitude', 'longitude',
+        'npsn',
+        'nama',
+        'jenjang',
+        'status',
+        'alamat',
+        'kecamatan',
+        'telepon',
+        'latitude',
+        'longitude',
     ];
-        protected function casts(): array
+    protected function casts(): array
     {
-    return [
-        'latitude' => 'float',
-        'longitude' => 'float',
-    ];
+        return [
+            'latitude' => 'float',
+            'longitude' => 'float',
+        ];
     }
     public function profil(): HasOne
     {
-    return $this->hasOne(ProfilSekolah::class);
+        return $this->hasOne(ProfilSekolah::class, 'sekolah_id', 'id');
     }
     public function users(): HasMany
     {
-    return $this->hasMany(User::class);
+        return $this->hasMany(User::class, 'sekolah_id', 'id');
     }
 }
