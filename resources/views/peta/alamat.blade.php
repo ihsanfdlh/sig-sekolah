@@ -121,16 +121,13 @@
             minOpacity: 0.3
         });
         layerKlaster.addTo(map);
-        const overlays = {
-            'Marker Sekolah': layerMarker,
-            'Klaster Sekolah': layerKlaster,
-            'Peta Panas': layerPanas
-        };
-        L.control.layers(baseLayers, overlays, {
+
+        L.control.layers(baseLayers, null, {
             collapsed: true,
-            position: 'topright',
+            position: 'topleft',
             autoZIndex: true
         }).addTo(map);
+
         const lapisan = L.layerGroup().addTo(map);
         const layerRadius = L.layerGroup().addTo(map);
         const panel = document.getElementById('hasil');

@@ -95,16 +95,13 @@ const layerPanas = L.heatLayer([], {
     minOpacity: 0.3
 });
 layerKlaster.addTo(map);
-const overlays = {
-    'Marker Sekolah': layerMarker,
-    'Klaster Sekolah': layerKlaster,
-    'Peta Panas': layerPanas
-};
-L.control.layers(baseLayers, overlays, {
+
+L.control.layers(baseLayers, null, {
     collapsed: true,
     position: 'topright',
     autoZIndex: true
 }).addTo(map);
+
     const MAKS = 10;
     const lapisanRute = L.layerGroup().addTo(map);
     const semua = new Map();   // npsn => fitur

@@ -84,14 +84,13 @@
         };
         baseLayers['Jalanan (OpenStreetMap)'].addTo(map);
         const lapisan = L.layerGroup().addTo(map);
-        const overlays = {
-            'Marker Sekolah': lapisan
-        };
-        L.control.layers(baseLayers, overlays, {
+
+        L.control.layers(baseLayers, null, {
             collapsed: true,
             position: 'topright',
             autoZIndex: true
         }).addTo(map);
+
         let semua = [];
         let tunda;
 
