@@ -188,6 +188,21 @@
         });
     </script>
 
+    <script>
+        window.aturLoadingPetaPublik = function(aktif) {
+            const frame = document.getElementById('public-map-frame');
+            const loading = document.getElementById('peta-loading');
+
+            if (!frame || !loading) {
+                throw new Error('Indikator loading peta publik tidak ditemukan.');
+            }
+
+            frame.classList.toggle('is-loading', aktif);
+            frame.setAttribute('aria-busy', String(aktif));
+            loading.hidden = !aktif;
+        };
+    </script>
+
     @stack('scripts')
 
 </body>

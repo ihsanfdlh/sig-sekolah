@@ -31,7 +31,13 @@
         </span>
     </div>
 
-    <div id="peta" class="peta"></div>
+    <div id="public-map-frame" class="public-map-frame is-loading" aria-busy="true">
+        <div id="peta" class="peta"></div>
+        <div id="peta-loading" class="public-map-loading" role="status" aria-live="polite">
+            <span class="public-map-loading-spinner" aria-hidden="true"></span>
+            <span>Memuat data sekolah...</span>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
@@ -123,6 +129,7 @@
 
         async function muat(jenjang = '', status = '') {
             const requestId = ++requestTerakhir;
+            window.aturLoadingPetaPublik(true);
 
             try {
                 jumlah.textContent = 'Memuat data...';
@@ -181,6 +188,10 @@
 
                 console.error('Gagal memuat sekolah:', error);
                 jumlah.textContent = 'Gagal memuat data';
+            } finally {
+                if (requestId === requestTerakhir) {
+                    window.aturLoadingPetaPublik(false);
+                }
             }
         }
 

@@ -16,7 +16,13 @@
         <span id="jumlah"></span>
     </div>
 
-    <div id="peta" class="peta"></div>
+    <div id="public-map-frame" class="public-map-frame is-loading" aria-busy="true">
+        <div id="peta" class="peta"></div>
+        <div id="peta-loading" class="public-map-loading" role="status" aria-live="polite">
+            <span class="public-map-loading-spinner" aria-hidden="true"></span>
+            <span>Memuat data sekolah...</span>
+        </div>
+    </div>
 
     <div class="panel wilayah-legend">
         <strong>Jumlah sekolah</strong>
@@ -97,6 +103,7 @@
         }).addTo(map);
 
         let lapisan = null;
+        let requestTerakhir = 0;
 
         function warna(rasio) {
             if (rasio >= 0.8) return '#dc2626';
@@ -123,6 +130,10 @@
 
 
         async function muat(jenjang = '') {
+            const requestId = ++requestTerakhir;
+            window.aturLoadingPetaPublik(true);
+            document.getElementById('jumlah').textContent = 'Memuat data...';
+
             try {
                 // 1. Mengambil batas kecamatan resmi
                 const respon = await fetch('/geojson/batas_kecamatan.geojson');
@@ -132,9 +143,11 @@
                 }
 
                 const data = await respon.json();
+                if (requestId !== requestTerakhir) return;
 
                 // 2. Mengambil data sekolah sesuai filter jenjang
                 const sekolah = await Peta.ambilSekolah(jenjang);
+                if (requestId !== requestTerakhir) return;
                 console.log('Data sekolah:', sekolah);
                 console.log('Jumlah sekolah:', sekolah.length);
                 console.log('Contoh properti:', sekolah[0]?.properties);
@@ -231,10 +244,16 @@
                 }
 
             } catch (error) {
+                if (requestId !== requestTerakhir) return;
+
                 console.error('Gagal memuat wilayah:', error);
 
                 document.getElementById('jumlah').textContent =
                     'Gagal memuat data wilayah';
+            } finally {
+                if (requestId === requestTerakhir) {
+                    window.aturLoadingPetaPublik(false);
+                }
             }
         }
 

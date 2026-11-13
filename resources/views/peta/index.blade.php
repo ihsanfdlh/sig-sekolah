@@ -30,7 +30,13 @@
         Unduh GeoJSON
     </button>
 </div>
-<div id="peta" class="peta"></div>
+<div id="public-map-frame" class="public-map-frame is-loading" aria-busy="true">
+    <div id="peta" class="peta"></div>
+    <div id="peta-loading" class="public-map-loading" role="status" aria-live="polite">
+        <span class="public-map-loading-spinner" aria-hidden="true"></span>
+        <span>Memuat data sekolah...</span>
+    </div>
+</div>
 @endsection
 @push('scripts')
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
@@ -128,6 +134,7 @@ async function muat() {
     }
     const controller = new AbortController();
     controllerAktif = controller;
+    window.aturLoadingPetaPublik(true);
     jumlah.textContent = 'Memuat data...';
     try {
         const response = await fetch('/data/sekolah?' + parameterPeta().toString(), {
@@ -177,6 +184,7 @@ async function muat() {
     } finally {
         if (controllerAktif === controller) {
             controllerAktif = null;
+            window.aturLoadingPetaPublik(false);
         }
     }
 }

@@ -25,7 +25,13 @@
         <span id="jumlah"></span>
     </div>
 
-    <div id="peta" class="peta"></div>
+    <div id="public-map-frame" class="public-map-frame is-loading" aria-busy="true">
+        <div id="peta" class="peta"></div>
+        <div id="peta-loading" class="public-map-loading" role="status" aria-live="polite">
+            <span class="public-map-loading-spinner" aria-hidden="true"></span>
+            <span>Memuat data sekolah...</span>
+        </div>
+    </div>
 
     <div class="panel heat-legend">
         <div class="heat-legend-scale"></div>
@@ -105,6 +111,7 @@
 
         let heat = null;
         let data = [];
+        let requestTerakhir = 0;
 
         function gambar() {
             const mode = document.getElementById('mode').value;
@@ -141,11 +148,28 @@
         }
 
         async function muat() {
-            data = await Peta.ambilSekolah(document.getElementById('jenjang').value);
-            gambar();
+            const requestId = ++requestTerakhir;
+            window.aturLoadingPetaPublik(true);
 
-            if (data.length > 0) {
-                map.fitBounds(L.latLngBounds(data.map(Peta.latlng)).pad(0.1));
+            try {
+                const fitur = await Peta.ambilSekolah(document.getElementById('jenjang').value);
+                if (requestId !== requestTerakhir) return;
+
+                data = fitur;
+                gambar();
+
+                if (data.length > 0) {
+                    map.fitBounds(L.latLngBounds(data.map(Peta.latlng)).pad(0.1));
+                }
+            } catch (error) {
+                if (requestId !== requestTerakhir) return;
+
+                console.error('Gagal memuat data peta panas:', error);
+                document.getElementById('jumlah').textContent = 'Gagal memuat data';
+            } finally {
+                if (requestId === requestTerakhir) {
+                    window.aturLoadingPetaPublik(false);
+                }
             }
         }
 

@@ -4,7 +4,13 @@
 
 
 @section('content')
-<div id="peta" class="peta"></div>
+<div id="public-map-frame" class="public-map-frame is-loading" aria-busy="true">
+    <div id="peta" class="peta"></div>
+    <div id="peta-loading" class="public-map-loading" role="status" aria-live="polite">
+        <span class="public-map-loading-spinner" aria-hidden="true"></span>
+        <span>Memuat data sekolah...</span>
+    </div>
+</div>
 
 <div class="panel route-panel">
     <strong>Rute kunjungan sekolah</strong>
@@ -190,8 +196,9 @@ L.control.layers(baseLayers, null, {
 
         const tombol = document.getElementById('buat');
         tombol.disabled = true;
+        window.aturLoadingPetaPublik(true);
+        try {
         const rute = await ambilRute(titik);
-        tombol.disabled = false;
 
         lapisanRute.clearLayers();
 
@@ -241,6 +248,10 @@ L.control.layers(baseLayers, null, {
         `;
 
         map.fitBounds(garis.getBounds().pad(0.1));
+        } finally {
+            tombol.disabled = false;
+            window.aturLoadingPetaPublik(false);
+        }
     }
 
     function reset() {
@@ -267,6 +278,13 @@ L.control.layers(baseLayers, null, {
 
         gambarDaftar();
         map.fitBounds(L.latLngBounds(fitur.map(Peta.latlng)).pad(0.1));
+    }).catch((error) => {
+        console.error('Gagal memuat data sekolah:', error);
+        const pesan = document.createElement('li');
+        pesan.textContent = 'Gagal memuat data sekolah.';
+        document.getElementById('daftar').appendChild(pesan);
+    }).finally(() => {
+        window.aturLoadingPetaPublik(false);
     });
 </script>
 @endpush

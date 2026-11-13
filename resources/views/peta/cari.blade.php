@@ -20,7 +20,13 @@
     </button>
     <span id="jumlah" aria-live="polite"></span>
 </div>
-<div id="peta" class="peta"></div>
+<div id="public-map-frame" class="public-map-frame is-loading" aria-busy="true">
+    <div id="peta" class="peta"></div>
+    <div id="peta-loading" class="public-map-loading" role="status" aria-live="polite">
+        <span class="public-map-loading-spinner" aria-hidden="true"></span>
+        <span>Memuat data sekolah...</span>
+    </div>
+</div>
 <div id="panel-hasil" class="panel">
     <div class="panel-hasil-header">
         <strong>Hasil Pencarian</strong>
@@ -171,6 +177,8 @@ Peta.ambilSekolah().then(function(fitur) {
     const li = document.createElement('li');
     li.textContent = 'Data sekolah tidak dapat dimuat.';
     daftarHasil.appendChild(li);
+}).finally(function() {
+    window.aturLoadingPetaPublik(false);
 });
 </script>
 @endpush

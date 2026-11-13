@@ -8,10 +8,16 @@
         Klik di mana saja pada peta untuk melihat alamat dan sekolah terdekat.
     </div>
 
-    <div id="peta" class="peta">
-        <button type="button" id="btn-lokasi" class="btn-lokasi">
-            📍 Lokasi Saya
-        </button>
+    <div id="public-map-frame" class="public-map-frame is-loading" aria-busy="true">
+        <div id="peta" class="peta">
+            <button type="button" id="btn-lokasi" class="btn-lokasi">
+                📍 Lokasi Saya
+            </button>
+        </div>
+        <div id="peta-loading" class="public-map-loading" role="status" aria-live="polite">
+            <span class="public-map-loading-spinner" aria-hidden="true"></span>
+            <span>Memuat data sekolah...</span>
+        </div>
     </div>
 
     <div id="hasil" class="panel location-results-panel" hidden></div>
@@ -90,9 +96,14 @@
         const panel = document.getElementById('hasil');
         let semua = [];
         let terakhir = 0;
+        let requestPencarianTerakhir = 0;
 
         Peta.ambilSekolah().then((fitur) => {
             semua = fitur;
+        }).catch((error) => {
+            console.error('Gagal memuat data sekolah:', error);
+        }).finally(() => {
+            window.aturLoadingPetaPublik(false);
         });
 
         // n sekolah terdekat dari sebuah titik [lat, lng]
@@ -122,7 +133,10 @@
             const sekarang = Date.now();
             if (sekarang - terakhir < 1200) return;
             terakhir = sekarang;
+            const requestId = ++requestPencarianTerakhir;
+            window.aturLoadingPetaPublik(true);
 
+            try {
             const {
                 lat,
                 lng
@@ -154,6 +168,7 @@
             let bagianAlamat = '<em>Alamat tidak dapat dimuat.</em>';
             try {
                 const data = await ambilAlamat(lat, lng);
+                if (requestId !== requestPencarianTerakhir) return;
                 const a = data.address || {};
 
                 const baris = [
@@ -172,6 +187,8 @@
                 <p class="address-display-name">${Peta.esc(data.display_name || '-')}</p>
                 <table class="address-detail-table">${baris}</table>`;
             } catch (err) {
+                if (requestId !== requestPencarianTerakhir) return;
+
                 console.error(err);
             }
 
@@ -238,6 +255,16 @@
             ${bagianAlamat}
             <strong class="location-section-title">Sekolah terdekat</strong>
             <ul class="nearby-school-list">${daftar}</ul>`;
+            } catch (error) {
+                if (requestId !== requestPencarianTerakhir) return;
+
+                console.error('Gagal menganalisis lokasi:', error);
+                panel.textContent = 'Gagal memuat informasi lokasi.';
+            } finally {
+                if (requestId === requestPencarianTerakhir) {
+                    window.aturLoadingPetaPublik(false);
+                }
+            }
         }
 
         map.on('click', cekLokasi);
