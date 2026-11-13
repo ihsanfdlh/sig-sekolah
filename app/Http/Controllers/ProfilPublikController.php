@@ -1,16 +1,12 @@
 <?php
 namespace App\Http\Controllers;
 use App\Models\Sekolah;
-use Illuminate\Http\JsonResponse;
+use Illuminate\View\View;
 class ProfilPublikController extends Controller
 {
-    public function show(Sekolah $sekolah): JsonResponse
+    public function show(Sekolah $sekolah): View
     {
         $sekolah->load('profil');
-        return response()->json([
-            'status' => 'berhasil',
-            'sekolah' => $sekolah->nama,
-            'profil' => $sekolah->profil,
-        ]);
+        return view('public.profil-sekolah-test', compact('sekolah'));
     }
 }
