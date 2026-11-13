@@ -12,8 +12,23 @@
     </div>
 </div>
 
-<div class="panel route-panel">
-    <strong>Rute kunjungan sekolah</strong>
+<button id="buka-panel-rute" class="route-panel-trigger" type="button"
+        aria-controls="panel-rute" aria-expanded="true" hidden>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M4 6h16M4 12h16M4 18h16"/>
+    </svg>
+    <span>Rute kunjungan</span>
+</button>
+<div id="panel-rute" class="panel route-panel" aria-hidden="false">
+    <div class="route-panel-header">
+        <strong>Rute kunjungan sekolah</strong>
+        <button id="tutup-panel-rute" class="route-panel-close" type="button"
+                aria-label="Tutup panel rute" title="Tutup panel rute">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                <path d="M18 6 6 18M6 6l12 12"/>
+            </svg>
+        </button>
+    </div>
     <p class="route-description">
         Pilih 2 sampai 10 sekolah. Urutan rute mengikuti urutan Anda mencentang.
     </p>
@@ -99,6 +114,20 @@ L.control.layers(baseLayers, null, {
     const lapisanRute = L.layerGroup().addTo(map);
     const semua = new Map();   // npsn => fitur
     let terpilih = [];         // urutan npsn yang dicentang
+    const panelRute = document.getElementById('panel-rute');
+    const tombolBukaPanelRute = document.getElementById('buka-panel-rute');
+    const tombolTutupPanelRute = document.getElementById('tutup-panel-rute');
+
+    function aturPanelRute(terbuka) {
+        panelRute.hidden = !terbuka;
+        panelRute.setAttribute('aria-hidden', String(!terbuka));
+        tombolBukaPanelRute.hidden = terbuka;
+        tombolBukaPanelRute.setAttribute('aria-expanded', String(terbuka));
+        (terbuka ? tombolTutupPanelRute : tombolBukaPanelRute).focus();
+    }
+
+    tombolBukaPanelRute.addEventListener('click', () => aturPanelRute(true));
+    tombolTutupPanelRute.addEventListener('click', () => aturPanelRute(false));
 
     function gambarDaftar() {
         const kata = document.getElementById('kata').value.trim().toLowerCase();
