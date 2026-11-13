@@ -112,6 +112,7 @@ const btnUnduh = document.getElementById('btn-unduh-geojson');
 let controllerAktif = null;
 let requestTerakhir = 0;
 let timerPeta = null;
+let pemuatanAwal = true;
 let geojsonTerakhir = {
     type: 'FeatureCollection',
     features: []
@@ -134,8 +135,10 @@ async function muat() {
     }
     const controller = new AbortController();
     controllerAktif = controller;
-    window.aturLoadingPetaPublik(true);
-    jumlah.textContent = 'Memuat data...';
+    if (pemuatanAwal) {
+        window.aturLoadingPetaPublik(true);
+        jumlah.textContent = 'Memuat data...';
+    }
     try {
         const response = await fetch('/data/sekolah?' + parameterPeta().toString(), {
             signal: controller.signal,
@@ -184,7 +187,10 @@ async function muat() {
     } finally {
         if (controllerAktif === controller) {
             controllerAktif = null;
-            window.aturLoadingPetaPublik(false);
+            if (pemuatanAwal) {
+                pemuatanAwal = false;
+                window.aturLoadingPetaPublik(false);
+            }
         }
     }
 }
