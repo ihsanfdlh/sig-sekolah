@@ -61,8 +61,76 @@
 @endsection
 
 @push('scripts')
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
     <script>
         const map = Peta.buat('peta');
+        const pusatJaro = [-1.8505, 115.6350];
+        const zoomAwal = 12;
+        map.setView(pusatJaro, zoomAwal);
+        map.eachLayer(function(layer) {
+            if (layer instanceof L.TileLayer) {
+                map.removeLayer(layer);
+            }
+        });
+        const atribusiOSM = '&copy; OpenStreetMap contributors';
+        const atribusiEsri = 'Tiles &copy; Esri';
+        const atribusiCarto = '&copy; OpenStreetMap contributors &copy; CARTO';
+        const baseLayers = {
+            'Jalanan (OpenStreetMap)': L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: atribusiOSM,
+                maxZoom: 18
+            }),
+            'Satelit (Esri)': L.tileLayer(
+                'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                    attribution: atribusiEsri,
+                    maxZoom: 18
+                }),
+            'Satelit + Nama Lokasi': L.layerGroup([
+                L.tileLayer(
+                    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                        attribution: atribusiEsri,
+                        maxZoom: 18
+                    }),
+                L.tileLayer(
+                    'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+                        attribution: atribusiEsri,
+                        maxZoom: 18
+                    })
+            ]),
+            'Topografi (Esri)': L.tileLayer(
+                'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+                    attribution: atribusiEsri,
+                    maxZoom: 18
+                })
+        };
+        const layerAwal = baseLayers['Jalanan (OpenStreetMap)'];
+        layerAwal.addTo(map);
+        const layerMarker = L.layerGroup();
+        const layerKlaster = L.markerClusterGroup({
+            showCoverageOnHover: false,
+            maxClusterRadius: 60,
+            spiderfyOnMaxZoom: true,
+            disableClusteringAtZoom: 17,
+            chunkedLoading: true
+        });
+        const layerPanas = L.heatLayer([], {
+            radius: 25,
+            blur: 18,
+            maxZoom: 17,
+            minOpacity: 0.3
+        });
+        layerKlaster.addTo(map);
+        const overlays = {
+            'Marker Sekolah': layerMarker,
+            'Klaster Sekolah': layerKlaster,
+            'Peta Panas': layerPanas
+        };
+        L.control.layers(baseLayers, overlays, {
+            collapsed: true,
+            position: 'topright',
+            autoZIndex: true
+        }).addTo(map);
         const lapisan = L.layerGroup().addTo(map);
         const layerRadius = L.layerGroup().addTo(map);
         const panel = document.getElementById('hasil');
